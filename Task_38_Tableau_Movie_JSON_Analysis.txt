@@ -1,0 +1,122 @@
+================================================================================
+TASK 38: MOVIE JSON DATASET VISUALIZATION & DASHBOARD IN TABLEAU
+Data Format: JSON (JavaScript Object Notation)
+Visualizations Required:
+  1. Number of Movies per Decade
+  2. Average IMDb Rating by Genre
+  3. Total Movies by Language
+  4. Interactive Dashboard with Country Filter
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: PREPARE AND IMPORT JSON DATASET INTO TABLEAU
+--------------------------------------------------------------------------------
+1. JSON Dataset Format:
+   If you need a sample JSON file, save the following structure as "movies.json":
+   [
+     {"Title": "The Shawshank Redemption", "Year": 1994, "Genre": "Drama", "IMDb_Rating": 9.3, "Language": "English", "Country": "USA"},
+     {"Title": "The Godfather", "Year": 1972, "Genre": "Crime", "IMDb_Rating": 9.2, "Language": "English", "Country": "USA"},
+     {"Title": "The Dark Knight", "Year": 2008, "Genre": "Action", "IMDb_Rating": 9.0, "Language": "English", "Country": "USA"},
+     {"Title": "Spirited Away", "Year": 2001, "Genre": "Animation", "IMDb_Rating": 8.6, "Language": "Japanese", "Country": "Japan"},
+     {"Title": "Parasite", "Year": 2019, "Genre": "Thriller", "IMDb_Rating": 8.5, "Language": "Korean", "Country": "South Korea"},
+     {"Title": "Amélie", "Year": 2001, "Genre": "Comedy", "IMDb_Rating": 8.3, "Language": "French", "Country": "France"},
+     {"Title": "City of God", "Year": 2002, "Genre": "Crime", "IMDb_Rating": 8.6, "Language": "Portuguese", "Country": "Brazil"},
+     {"Title": "Life Is Beautiful", "Year": 1997, "Genre": "Comedy", "IMDb_Rating": 8.6, "Language": "Italian", "Country": "Italy"},
+     {"Title": "Inception", "Year": 2010, "Genre": "Sci-Fi", "IMDb_Rating": 8.8, "Language": "English", "Country": "USA"},
+     {"Title": "Interstellar", "Year": 2014, "Genre": "Sci-Fi", "IMDb_Rating": 8.7, "Language": "English", "Country": "USA"}
+   ]
+
+2. Import JSON into Tableau Desktop:
+   - Launch Tableau Desktop.
+   - Under "Connect", click **"JSON file"**.
+   - Browse to your "movies.json" file and click "Open".
+   - Select Schema Levels:
+     * A pop-up dialog "Select Schema Levels" appears.
+     * Check the root level box (e.g., `root`, `movies`) to import all nested attributes.
+     * Click **"OK"**.
+   - Verify columns in the Data Source preview grid:
+     * Title (String), Year (Integer), Genre (String), IMDb_Rating (Decimal), Language (String), Country (String).
+   - Click "Sheet 1".
+
+
+--------------------------------------------------------------------------------
+STEP 2: CREATE CALCULATED FIELD: "DECADE"
+--------------------------------------------------------------------------------
+1. In the Data pane, right-click and choose "Create Calculated Field...".
+2. Configure the field:
+   - Field Name: Decade
+   - Formula:
+     STR(FLOOR([Year] / 10) * 10) + "s"
+     *(Examples: 1972 -> "1970s", 1994 -> "1990s", 2008 -> "2000s", 2019 -> "2010s").*
+3. Verify that the bottom says "The calculation is valid."
+4. Click "OK".
+
+
+--------------------------------------------------------------------------------
+STEP 3: CREATE SHEET 1 — NUMBER OF MOVIES PER DECADE
+--------------------------------------------------------------------------------
+1. Rename Sheet 1 to **"Movies per Decade"**.
+2. Configure Axes:
+   - Drag **"Decade"** onto the **Columns** shelf.
+   - Drag **"Title"** (or table count) onto the **Rows** shelf.
+   - Right-click the `Title` pill on Rows -> select "Measure" -> **"Count"** (`CNT(Title)`).
+3. Set Mark Type:
+   - Marks card dropdown: **"Bar"**.
+4. Color & Labels:
+   - Drag `CNT(Title)` onto the **Color** tile for sequential gradient shading.
+   - Drag `CNT(Title)` onto the **Label** tile to display the movie count on each bar.
+
+
+--------------------------------------------------------------------------------
+STEP 4: CREATE SHEET 2 — AVERAGE IMDB RATING BY GENRE
+--------------------------------------------------------------------------------
+1. Click the "New Worksheet" tab at the bottom; rename to **"Avg Rating by Genre"**.
+2. Configure Axes:
+   - Drag **"Genre"** onto the **Rows** shelf.
+   - Drag **"IMDb_Rating"** onto the **Columns** shelf.
+   - Right-click the `IMDb_Rating` pill -> change "Measure (Sum)" to **"Average"** (`AVG(IMDb_Rating)`).
+3. Format & Sort:
+   - Click the **Sort Descending** button in the top toolbar to order genres by rating.
+   - Drag `AVG(IMDb_Rating)` onto the **Color** tile (use a Gold/Amber or Blue palette).
+   - Click the "T" mark label button to show exact numbers (e.g., 8.8, 8.5).
+   - Format: Right-click `AVG(IMDb_Rating)` on Columns -> "Format..." -> Numbers -> "Number (Custom)" -> 1 decimal place.
+
+
+--------------------------------------------------------------------------------
+STEP 5: CREATE SHEET 3 — TOTAL MOVIES BY LANGUAGE
+--------------------------------------------------------------------------------
+1. Click "New Worksheet"; rename to **"Movies by Language"**.
+2. Build Treemap or Horizontal Bar:
+   - Drag **"Language"** onto the **Rows** shelf (or Marks **Label** for Treemap).
+   - Drag **"Title"** onto the **Columns** shelf -> set to **`CNT(Title)`** (or Marks **Size** for Treemap).
+   - Sort descending.
+   - Drag `CNT(Title)` to **Color** and **Label**.
+
+
+--------------------------------------------------------------------------------
+STEP 6: BUILD THE DASHBOARD & ADD COUNTRY FILTER
+--------------------------------------------------------------------------------
+1. Click the **"New Dashboard"** tab at the bottom.
+2. Rename to **"Global Movie Insights Dashboard"**.
+3. Set Size: Change to **"Automatic"**.
+4. Assemble Layout:
+   - Drag **"Movies per Decade"** to the top-left container.
+   - Drag **"Avg Rating by Genre"** to the top-right container.
+   - Drag **"Movies by Language"** across the bottom container.
+5. Add Dashboard Title:
+   - Check "Show dashboard title" at the bottom-left -> Title: "GLOBAL CINEMA & IMDB ANALYTICS DASHBOARD".
+
+6. Add and Configure Country Filter:
+   - Click on the "Movies per Decade" sheet in the dashboard.
+   - Click the "More Options" downward arrow on its container border.
+   - Navigate to: **Filters** -> select **"Country"**.
+   - An interactive Country filter card appears on the right.
+   - Make it Global:
+     * Click the dropdown arrow on the Country filter card.
+     * Select **"Apply to Worksheets"** -> click **"All Using This Data Source"**.
+   - Change filter style to **"Multiple Values (dropdown)"** or **"Single Value (list)"**.
+
+7. Test Interactivity:
+   - Select "USA": View decades, top genres, and English dominance for American cinema.
+   - Select "Japan", "France", or "South Korea": Dynamically observe local language distribution and genre performance.
+================================================================================

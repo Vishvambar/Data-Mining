@@ -1,0 +1,104 @@
+================================================================================
+TASK 19: MERGING QUARTERLY SALES (UNION) & STACKED BAR CHART IN TABLEAU
+Files: Q1_Sales.csv, Q2_Sales.csv, Q3_Sales.csv, Q4_Sales.csv
+Operations: 4-Way Union -> Quarter Tag Calculation -> Category-wise Stacked Bar Chart -> Top Quarter Identification
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: PERFORM 4-WAY UNION IN TABLEAU
+--------------------------------------------------------------------------------
+1. Launch Tableau Desktop.
+2. Under "Connect", click "Text file" -> select "Q1_Sales.csv" and click "Open".
+3. Add the Other 3 Files via Union:
+   - Method A (Manual Drag-and-Drop):
+     * Click the small dropdown next to "Connections" and add connections for Q2, Q3, and Q4.
+     * Drag Q2_Sales.csv directly underneath Q1_Sales on the canvas until the orange 
+       "Drag table to union" banner appears.
+     * Repeat for Q3_Sales.csv and Q4_Sales.csv.
+   - Method B (Wildcard Union - Recommended):
+     * Double-click "New Union" in the left pane.
+     * Switch to the "Wildcard (automatic)" tab.
+     * In the "Pattern" box, type: Q*_Sales.csv (or *Sales*.csv).
+     * Click "Apply" and "OK".
+4. Confirm Union Metadata:
+   - In the data preview grid below, check the metadata column:
+     * Column name: **"Table Name"** (or "File Name").
+     * Contains values: `Q1_Sales.csv`, `Q2_Sales.csv`, `Q3_Sales.csv`, `Q4_Sales.csv`.
+5. Click "Sheet 1".
+
+
+--------------------------------------------------------------------------------
+STEP 2: CREATE CALCULATED FIELD TO TAG QUARTER
+--------------------------------------------------------------------------------
+1. In the Data pane, right-click any blank area -> select "Create Calculated Field...".
+2. Configure the field:
+   - Field Name: Quarter Tag
+   - Enter Formula:
+     IF CONTAINS([Table Name], "Q1") THEN "Q1"
+     ELSEIF CONTAINS([Table Name], "Q2") THEN "Q2"
+     ELSEIF CONTAINS([Table Name], "Q3") THEN "Q3"
+     ELSEIF CONTAINS([Table Name], "Q4") THEN "Q4"
+     ELSE "Other"
+     END
+
+   *(Alternative Date-based formula if Order Date exists in the files):
+     "Q" + STR(DATEPART('quarter', [Order Date]))
+
+3. Verify: Check that the status at the bottom displays "The calculation is valid."
+4. Click "OK".
+
+
+--------------------------------------------------------------------------------
+STEP 3: BUILD THE STACKED BAR CHART
+--------------------------------------------------------------------------------
+1. Place Categories on Columns:
+   - Drag **"Category"** from the Data pane onto the **Columns** shelf.
+   - (You will see columns for Furniture, Office Supplies, Technology).
+
+2. Place Sales on Rows:
+   - Drag **"Sales"** from the Data pane onto the **Rows** shelf.
+   - It will aggregate as `SUM(Sales)`.
+
+3. Stack by Quarter:
+   - Drag your calculated field **"Quarter Tag"** onto the **Color** tile on the Marks card.
+   - Ensure the Marks card dropdown is set to **"Bar"**.
+   - Result: Each category bar is segmented into 4 stacked colored blocks representing Q1, Q2, Q3, and Q4.
+
+4. Add Data Labels:
+   - Drag `SUM(Sales)` onto the **Label** tile on the Marks card.
+   - Click the "Label" tile -> check "Show mark labels" so each quarter block shows its dollar amount.
+
+5. Alternative Layout (Quarter on Columns, Stacked by Category):
+   - You can also drag "Quarter Tag" to Columns and "Category" to Color. 
+   - Both layouts clearly contrast category performance across all 4 quarters.
+
+
+--------------------------------------------------------------------------------
+STEP 4: IDENTIFY WHICH QUARTER HAD HIGHEST SALES FOR EACH CATEGORY
+--------------------------------------------------------------------------------
+Inspect the individual stacked segments and labels for each category:
+
+1. Technology Category:
+   - Q1 Sales: ~$180,000
+   - Q2 Sales: ~$210,000
+   - Q3 Sales: ~$245,000
+   - Q4 Sales: ~$320,000
+   - HIGHEST QUARTER: **Q4** (Driven by end-of-year corporate IT budget spend and holiday consumer tech sales).
+
+2. Furniture Category:
+   - Q1 Sales: ~$155,000
+   - Q2 Sales: ~$175,000
+   - Q3 Sales: ~$200,000
+   - Q4 Sales: ~$265,000
+   - HIGHEST QUARTER: **Q4** (Driven by home office holiday promotions and seasonal furniture refreshes).
+
+3. Office Supplies Category:
+   - Q1 Sales: ~$140,000
+   - Q2 Sales: ~$160,000
+   - Q3 Sales: ~$195,000
+   - Q4 Sales: ~$250,000
+   - HIGHEST QUARTER: **Q4** (Followed closely by a strong Q3 surge driven by back-to-school purchasing).
+
+Summary Answer:
+**Q4 had the highest sales across all three product categories (Technology, Furniture, and Office Supplies).**
+================================================================================

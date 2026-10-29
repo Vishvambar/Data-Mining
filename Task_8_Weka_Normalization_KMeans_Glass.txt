@@ -1,0 +1,118 @@
+================================================================================
+TASK 8: NORMALIZATION AND KMEANS CLUSTERING (K=6) ON GLASS.ARFF IN WEKA
+Dataset: glass.arff (214 instances, chemical oxide concentrations, 6 glass types)
+Operations: Normalize attributes -> SimpleKMeans (k=6) -> Centroid Analysis -> Save Cluster Column
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: LOAD GLASS.ARFF IN WEKA
+--------------------------------------------------------------------------------
+1. Launch WEKA GUI Chooser -> click "Explorer".
+2. Under the "Preprocess" tab:
+   - Click "Open file...".
+   - Locate and select "glass.arff" (inside Weka's data directory).
+   - Click "Open".
+3. Check the Attributes:
+   - 9 numeric features: RI (refractive index), Na, Mg, Al, Si, K, Ca, Ba, Fe.
+   - 1 nominal target: Type (6 distinct glass types: 1, 2, 3, 5, 6, 7).
+
+
+--------------------------------------------------------------------------------
+STEP 2: APPLY NORMALIZATION FILTER TO ALL ATTRIBUTES
+--------------------------------------------------------------------------------
+*Why Normalize*: Chemical elements have different scales (e.g., Si is ~70%, 
+while Fe is ~0.05%). Normalization scales all attributes into the uniform range [0, 1], 
+preventing dominant attributes from skewing Euclidean distance calculations.
+
+1. In the "Preprocess" tab, look at the "Filter" box (top-left).
+2. Click "Choose".
+3. Expand: filters -> unsupervised -> attribute -> Normalize
+   (Path: weka.filters.unsupervised.attribute.Normalize).
+4. (Optional) Click on the text box "Normalize" to view settings:
+   - scale: 1.0
+   - translation: 0.0
+   - (This transforms values using formula: (x - min) / (max - min)).
+   - Click "OK".
+5. Click the "Apply" button next to Choose.
+6. Verify: Click on any attribute (like RI or Na) in the Attributes list. 
+   Notice in the right panel that Min is 0.0 and Max is 1.0.
+
+
+--------------------------------------------------------------------------------
+STEP 3: RUN SIMPLEKMEANS WITH 6 CLUSTERS
+--------------------------------------------------------------------------------
+1. Click on the "Cluster" tab at the top.
+2. Select Clusterer:
+   - Click "Choose" -> expand: clusterers -> SimpleKMeans.
+3. Configure Parameters:
+   - Click on the "SimpleKMeans" text box to open properties:
+     * numClusters: 6 (since the domain has 6 glass types)
+     * distanceFunction: weka.core.EuclideanDistance
+     * seed: 10
+     * maxIterations: 500
+   - Click "OK".
+4. Set Cluster Mode:
+   - Option A: "Classes to clusters evaluation" -> select "(Nom) Type".
+     (Evaluates how closely the 6 unsupervised clusters align with ground-truth glass types).
+   - Option B: "Use training set" (pure unsupervised analysis).
+5. Click "Start".
+
+
+--------------------------------------------------------------------------------
+STEP 4: ANALYZE CLUSTER CENTROIDS FROM CLUSTEREVALUATION OUTPUT
+--------------------------------------------------------------------------------
+In the "Clusterer output" panel on the right, locate the "Final cluster centroids" table:
+
+Attribute        Full Data (214)    Cluster 0    Cluster 1    Cluster 2 ... Cluster 5
+-------------------------------------------------------------------------------------
+RI               0.3167             0.2845       0.4120       ...
+Na               0.4026             0.3521       0.5620       ...
+Mg               0.5978             0.7812       0.1245       ...
+Al               0.3598             0.3120       0.6840       ...
+Si               0.5393             0.5120       0.4980       ...
+K                0.0800             0.0620       0.0150       ...
+Ca               0.3135             0.2910       0.4500       ...
+Ba               0.0350             0.0050       0.5820       ...
+Fe               0.1118             0.1200       0.0210       ...
+
+How to Interpret the Centroids:
+1. High Barium (Ba) / Aluminum (Al) Cluster:
+   - Look for the cluster with an unusually high Ba centroid (~0.5 - 0.7). 
+     This cleanly isolates Type 7 (Headlamps glass), which specifically uses barium.
+2. High Magnesium (Mg) vs. Low Mg Clusters:
+   - Building and vehicle window float glasses (Types 1 & 2) have high Magnesium (~0.75 - 0.85).
+   - Tableware / containers (Types 5 & 6) have near-zero Magnesium (~0.05 - 0.15) but higher Calcium/Sodium.
+3. Refractive Index (RI):
+   - Clusters with high Calcium (Ca) also show elevated Refractive Index (RI) due to optical density.
+
+
+--------------------------------------------------------------------------------
+STEP 5: SAVE CLUSTER ASSIGNMENTS IN A NEW ATTRIBUTE COLUMN
+--------------------------------------------------------------------------------
+There are two distinct ways to save the cluster assignments as a new attribute column:
+
+METHOD 1: Using the "AddCluster" Filter in WEKA (Recommended - Permanent Column)
+1. Go back to the "Preprocess" tab.
+2. Under "Filter", click "Choose".
+3. Expand: filters -> unsupervised -> attribute -> AddCluster.
+4. Click on the text box "AddCluster" to configure it:
+   - Click on the "clusterer" parameter.
+   - Click "Choose" -> select "clusterers -> SimpleKMeans".
+   - Click on the SimpleKMeans text and change "numClusters" to 6. Click "OK".
+5. Click "OK" on the AddCluster property window.
+6. Click the "Apply" button.
+7. Verification:
+   - Look at the bottom of the "Attributes" list on the left.
+   - A brand new 11th attribute named "cluster" is now appended to the dataset!
+8. Save the Updated Dataset:
+   - Click the "Save..." button at the top-right of the Preprocess pane.
+   - Enter filename: "glass_with_clusters.arff" -> click "Save".
+
+METHOD 2: Saving via Visualizer:
+1. In the "Cluster" tab, ensure the run is completed.
+2. In the "Result list" (bottom-left), right-click on the "SimpleKMeans" result.
+3. Select "Visualize cluster assignments".
+4. In the pop-up window, click the "Save" button (bottom-right).
+5. Name the file "glass_cluster_assignments.arff" and save. 
+   (This file appends an instance_number and a cluster attribute: cluster0 through cluster5).
+================================================================================

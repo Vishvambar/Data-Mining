@@ -1,0 +1,111 @@
+================================================================================
+TASK 18: PRODUCT & SALES FULL OUTER JOIN COMPARISON IN TABLEAU
+Datasets: Product_Master.csv and Sales.csv
+Operations: Full Outer Join on Product_ID -> Identify Inconsistencies -> Highlight Table -> Data Auditing Value
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: PERFORM FULL OUTER JOIN IN TABLEAU
+--------------------------------------------------------------------------------
+1. Launch Tableau Desktop.
+2. Under "Connect", click "Text file" -> select "Product_Master.csv" and open it.
+3. Switch to the Physical Join Layer:
+   - Double-click the "Product_Master" box on the data source canvas to open the physical canvas.
+4. Add the Second Table:
+   - In the left pane, click "Add" connection -> select "Sales.csv".
+   - Drag "Sales" to the right of "Product_Master".
+5. Configure Full Outer Join:
+   - Click the join icon (overlapping circles) between the two tables.
+   - Select **"Full Outer"** (the icon where both circles and the intersection are fully shaded).
+   - Set Join Clause:
+     * Data Source Field: `[Product ID]` (from Product_Master)
+     * Operator: `=`
+     * Right Field: `[Product ID]` (from Sales)
+6. Inspect the Preview:
+   - Notice that Tableau displays:
+     * Rows with matching Product IDs in both tables.
+     * Rows with Product_Master data but NULLs in Sales columns.
+     * Rows with Sales data but NULLs in Product_Master columns.
+7. Click "Sheet 1".
+
+
+--------------------------------------------------------------------------------
+STEP 2: CREATE CALCULATED FIELDS FOR AUDIT STATUS & COALESCED PRODUCT ID
+--------------------------------------------------------------------------------
+Since a Full Outer Join creates two separate `Product ID` fields (one from each table), 
+we create calculated fields for seamless auditing:
+
+1. Unified Product ID (Coalesce):
+   - In the Data pane, right-click -> "Create Calculated Field...".
+   - Field Name: Unified Product ID
+   - Formula:
+     IFNULL([Product ID (Product_Master)], [Product ID (Sales)])
+   - Click "OK".
+
+2. Audit Status (Classification of Incompleteness):
+   - Create Calculated Field -> Field Name: Audit Status
+   - Formula:
+     IF ISNULL([Product ID (Sales)]) THEN "Product with No Sales"
+     ELSEIF ISNULL([Product ID (Product_Master)]) THEN "Sale Missing Product Info"
+     ELSE "Matched & Active"
+     END
+   - Click "OK".
+
+
+--------------------------------------------------------------------------------
+STEP 3: IDENTIFY THE TWO CATEGORIES OF INCONSISTENT RECORDS
+--------------------------------------------------------------------------------
+1. Products with No Sales:
+   - In the worksheet, drag "Audit Status" to the **Rows** shelf.
+   - Drag "Unified Product ID" to the **Rows** shelf to the right of Audit Status.
+   - Filter to "Product with No Sales":
+     * Drag "Audit Status" to **Filters** -> select only "Product with No Sales".
+     * These rows represent items stocked in the catalog that have never generated a transaction.
+
+2. Sales Records with Missing Product Info:
+   - Change the filter on "Audit Status" to "Sale Missing Product Info":
+     * These rows represent orphaned sales transactions where the cashier/system recorded 
+       a sale, but the product code does not exist in the master product directory.
+
+
+--------------------------------------------------------------------------------
+STEP 4: CREATE A HIGHLIGHT TABLE SHOWING SALES & AVAILABILITY
+--------------------------------------------------------------------------------
+1. Clear the sheet or open a new sheet.
+2. Structure the Table:
+   - Drag **"Unified Product ID"** onto the **Rows** shelf.
+   - Drag **"Audit Status"** onto the **Columns** shelf.
+3. Configure Cell Values (Sales & Availability):
+   - Drag **"Sales"** (from Sales.csv) onto the **Text** tile on the Marks card.
+   - It will aggregate as `SUM(Sales)`.
+4. Turn into a Highlight Table:
+   - On the Marks card, change the mark type dropdown from "Automatic" to **"Square"**.
+   - Drag **`Audit Status`** (or `SUM(Sales)`) onto the **Color** tile on the Marks card.
+5. Customize Color Encoding:
+   - Click "Color" -> "Edit Colors...":
+     * "Matched & Active" -> Muted Green / Gray
+     * "Product with No Sales" -> Light Amber / Yellow (flags dead inventory)
+     * "Sale Missing Product Info" -> Bright Red (flags critical data integrity breach)
+   - Click "OK".
+6. Expand Layout:
+   - In top toolbar, select "Fit Width" to display a clear, readable highlight table.
+
+
+--------------------------------------------------------------------------------
+STEP 5: HOW DOES A FULL OUTER JOIN HELP IN AUDITING INCOMPLETE DATA?
+--------------------------------------------------------------------------------
+1. Bilateral Discrepancy Detection:
+   - An **Inner Join** hides all errors (it only returns rows that match in both tables, 
+     giving a false illusion of perfect data health).
+   - A **Left Join** only catches missing sales, but is completely blind to sales with missing products.
+   - A **Right Join** only catches missing products, but is blind to unsold inventory.
+   - Only a **Full Outer Join** ($Master \mathbin{⟗} Sales$) surfaces **both sides of data failure simultaneously**:
+     * Parent-without-Child (Dormant/Dead stock inventory tying up capital).
+     * Child-without-Parent (Orphaned sales causing revenue reconciliation failures, 
+       tax discrepancies, and inventory shrinkage).
+
+2. Strategic Data Governance & Auditing:
+   - Enables enterprise ERP administrators to generate comprehensive reconciliation reports.
+   - Audits point-of-sale systems to stop cashier code overrides.
+   - Purges obsolete catalog items and ensures financial ledger integrity.
+================================================================================

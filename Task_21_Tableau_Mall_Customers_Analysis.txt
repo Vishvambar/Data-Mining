@@ -1,0 +1,116 @@
+================================================================================
+TASK 21: MALL CUSTOMERS DEMOGRAPHIC ANALYSIS & DASHBOARD IN TABLEAU
+Dataset: Mall Customers CSV (Kaggle: https://www.kaggle.com/datasets/shwetabh123/mallcustomers)
+Fields: CustomerID, Gender (or Genre), Age, Annual Income (k$), Spending Score (1-100)
+Visualizations Required:
+  1. Scatter Plot: Spending Score vs. Annual Income
+  2. Histogram: Age Distribution
+  3. Demographic Dashboard combining all views
+  4. Interactive Filter: Gender
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: IMPORT MALL CUSTOMERS CSV INTO TABLEAU
+--------------------------------------------------------------------------------
+1. Launch Tableau Desktop.
+2. Under "Connect", click "Text file".
+3. Navigate to and open "Mall_Customers.csv".
+4. Check the preview columns:
+   - CustomerID: Number (Whole)
+   - Gender (or Genre): String (Male / Female)
+   - Age: Number (Whole)
+   - Annual Income (k$): Number (Whole)
+   - Spending Score (1-100): Number (Whole)
+5. Click "Sheet 1".
+
+
+--------------------------------------------------------------------------------
+STEP 2: CREATE SHEET 1 — SCATTER PLOT (SPENDING SCORE VS. ANNUAL INCOME)
+--------------------------------------------------------------------------------
+1. Rename Sheet 1 to **"Income vs Spending Scatter"**.
+2. Set Up the Axes:
+   - Drag **"Annual Income (k$)"** onto the **Columns** shelf (`SUM(Annual Income)`).
+   - Drag **"Spending Score (1-100)"** onto the **Rows** shelf (`SUM(Spending Score)`).
+3. Disaggregate Data to Individual Customer Level (CRITICAL):
+   - Notice that Tableau initially shows only a single dot representing the total sum.
+   - To show every individual customer point:
+     * Drag **"CustomerID"** from the Data pane onto the **Detail** tile on the Marks card.
+     * (Alternatively: Go to top menu bar -> click **"Analysis"** -> uncheck **"Aggregate Measures"**).
+   - You will instantly see 200 distinct customer dots plotted across the canvas.
+4. Color Encode by Gender:
+   - Drag **"Gender"** onto the **Color** tile on the Marks card.
+   - Assign distinct colors (e.g., Female = Soft Pink / Violet, Male = Slate Blue).
+5. Add Visual Enhancements:
+   - Click the **Color** tile -> set "Opacity" to 80% and add a subtle grey border.
+   - Click the **Size** tile and increase the point radius slightly.
+   - Mark clustering clusters: Observe the distinct 5 customer clusters:
+     * Low Income, Low Spending (Sensible/Frugal)
+     * Low Income, High Spending (Careless)
+     * Middle Income, Middle Spending (Standard)
+     * High Income, Low Spending (Careful)
+     * High Income, High Spending (Target VIP)
+
+
+--------------------------------------------------------------------------------
+STEP 3: CREATE SHEET 2 — HISTOGRAM OF AGE
+--------------------------------------------------------------------------------
+1. Click the "New Worksheet" tab at the bottom; rename it to **"Age Distribution Histogram"**.
+2. METHOD A: Using Tableau "Show Me" (One-Click)
+   - In the Data pane, click on the **"Age"** measure.
+   - In the top-right toolbar, click **"Show Me"**.
+   - Click on the **Histogram** icon (blue vertical bars with bin brackets).
+   - Tableau automatically generates `Age (bin)` and places it on Columns, with `CNT(Age)` on Rows.
+
+3. METHOD B: Manual Custom Bins (More Control)
+   - In the Data pane, right-click **"Age"** -> go to **Create** -> select **"Bins..."**.
+   - In the dialog:
+     * New field name: `Age (bin)`
+     * Size of bins: Enter `5` (or `10`) for 5-year age intervals.
+     * Click "OK".
+   - Drag **`Age (bin)`** onto the **Columns** shelf.
+   - Drag **"CustomerID"** onto the **Rows** shelf -> right-click pill -> select "Measure" -> **"Count"** (`CNT(CustomerID)`).
+4. Format Histogram:
+   - Drag `CNT(CustomerID)` onto the **Label** tile to show customer counts above each bar.
+   - Drag `CNT(CustomerID)` onto the **Color** tile for a sequential blue gradient.
+   - Observe: Peak shopping density falls between ages 25 and 35.
+
+
+--------------------------------------------------------------------------------
+STEP 4: BUILD THE DEMOGRAPHIC DASHBOARD
+--------------------------------------------------------------------------------
+1. Click the **"New Dashboard"** icon at the bottom.
+2. Rename it to **"Mall Customer Demographics Dashboard"**.
+3. Set Size:
+   - In the left pane, change Dashboard Size to **"Automatic"**.
+4. Arrange the Layout:
+   - Drag **"Income vs Spending Scatter"** into the left half of the dashboard.
+   - Drag **"Age Distribution Histogram"** into the right half of the dashboard.
+5. Add Dashboard Title:
+   - Check **"Show dashboard title"** at the bottom-left.
+   - Double-click the header: "MALL CUSTOMER DEMOGRAPHICS & BEHAVIORAL DASHBOARD".
+
+
+--------------------------------------------------------------------------------
+STEP 5: ADD INTERACTIVE FILTER FOR GENDER
+--------------------------------------------------------------------------------
+1. Add Gender Filter to Dashboard:
+   - Click on the "Income vs Spending Scatter" visual inside the dashboard.
+   - Click the "More Options" downward triangle in its border container.
+   - Navigate to: **Filters** -> select **"Gender"**.
+   - The interactive Gender filter card appears on the right.
+
+2. Apply Filter Across the Entire Dashboard:
+   - Click the dropdown arrow on the **Gender** filter card.
+   - Select **"Apply to Worksheets"** -> click **"All Using This Data Source"** 
+     (or "Selected Worksheets" -> check both Scatter Plot and Histogram).
+
+3. Format the Filter Control:
+   - Click the dropdown arrow on the Gender filter card again.
+   - Select **"Single Value (list)"** or **"Multiple Values (dropdown)"**.
+
+4. Test Dashboard Interactivity:
+   - Select "Female": Both the scatter plot and age histogram instantly update to display 
+     only the female demographic.
+   - Select "Male": Both views update to show male purchasing profiles.
+   - Select "All": Shows full cohort baseline.
+================================================================================

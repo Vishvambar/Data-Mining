@@ -1,0 +1,146 @@
+================================================================================
+TASK 1: LOGISTIC REGRESSION FOR LOAN APPROVAL PREDICTION IN WEKA
+Dataset: Age, Income, Loan_Status (approved / rejected)
+Reference: https://www.kaggle.com/datasets/taweilo/loan-approval-classification-data
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: PREPARE THE DATASET
+--------------------------------------------------------------------------------
+1. File Format:
+   - Ensure your dataset is saved in either .CSV or .ARFF format (e.g., loan_data.csv).
+
+2. Check Required Columns:
+   - Ensure the dataset has at least:
+     * Age (or person_age)
+     * Income (or person_income)
+     * Loan_Status (or loan_status)
+
+3. Target Attribute Type Requirement:
+   - In WEKA, classification algorithms REQUIRE the target variable (Loan_Status) 
+     to be NOMINAL (categorical, e.g., "approved"/"rejected" or "Y"/"N" or "0"/"1" as nominal).
+   - If Loan_Status is numeric (0 and 1) in your CSV, WEKA treats it as continuous. 
+     We will convert it inside WEKA in Step 3.
+
+
+--------------------------------------------------------------------------------
+STEP 2: LAUNCH WEKA AND LOAD THE DATASET
+--------------------------------------------------------------------------------
+1. Open the "WEKA GUI Chooser" application.
+2. Click on the "Explorer" button (top-left button).
+3. Ensure you are on the "Preprocess" tab (the first tab at the top).
+4. Click the "Open file..." button at the top-right of the Preprocess pane.
+5. In the file selection window:
+   - Go to the bottom dropdown menu labeled "Files of type:".
+   - Change it from "Arff data files (*.arff)" to "CSV data files (*.csv)" (or "All Files (*.*)").
+   - Navigate to the folder where your dataset is saved.
+   - Select your file (e.g., loan_data.csv) and click "Open".
+
+
+--------------------------------------------------------------------------------
+STEP 3: PREPROCESSING AND ATTRIBUTE FILTERING
+--------------------------------------------------------------------------------
+
+A. Convert Target Attribute (Loan_Status) from Numeric to Nominal (if needed):
+   1. In the "Attributes" panel on the left side, click on "Loan_Status" (or "loan_status").
+   2. Look at the right panel under "Selected attribute" -> check "Type":
+      - If it is already "Nominal", you can skip this step.
+      - If it says "Numeric", do the following:
+        a. Under the "Filter" box (top-left), click the "Choose" button.
+        b. Navigate: filters -> unsupervised -> attribute -> NumericToNominal.
+        c. Click directly on the text box where "NumericToNominal" appears to open its property panel.
+        d. In the "attributeIndices" field, enter the column index of Loan_Status (or type "last" if it is the last column).
+        e. Click "OK".
+        f. Click the "Apply" button located to the right of the Choose button.
+        g. Click on Loan_Status again in the Attributes panel to verify its Type is now "Nominal".
+
+B. Select Only Age, Income, and Loan_Status (Remove other attributes):
+   1. If your dataset contains extra columns (like loan_intent, loan_grade, etc.):
+      - In the "Attributes" list on the left, check the boxes next to all unwanted attributes.
+      - Leave "Age", "Income", and "Loan_Status" UNCHECKED.
+      - Click the "Remove" button at the bottom of the Attributes panel.
+   2. Verify that only the 3 required attributes remain.
+
+
+--------------------------------------------------------------------------------
+STEP 4: CONFIGURE & RUN LOGISTIC REGRESSION
+--------------------------------------------------------------------------------
+1. Click on the "Classify" tab at the top (the second tab).
+2. Click on the "Choose" button under the "Classifier" heading.
+3. In the tree navigation, expand:
+   - classifiers -> functions -> Logistic
+   (Path: weka.classifiers.functions.Logistic)
+4. Under "Test options":
+   - Select the "Cross-validation" radio button.
+   - Set "Folds:" to 10 (default is 10).
+5. Below the Test options, locate the target class dropdown:
+   - Ensure it is set to "(Nom) Loan_Status" (specifies the target variable).
+6. Click the "Start" button on the right side.
+7. Wait until the WEKA bird in the bottom-right corner stops moving (indicating completion).
+
+
+--------------------------------------------------------------------------------
+STEP 5: LOCATING AND REPORTING THE METRICS
+--------------------------------------------------------------------------------
+Once the execution finishes, look at the "Classifier output" window on the right.
+
+1. Classification Accuracy:
+   - Scroll down to the section titled: "=== Stratified cross-validation ==="
+   - Look for the row:
+     "Correctly Classified Instances         [Count]        XX.XXXX %"
+   - Report this percentage as the Overall Classification Accuracy.
+
+2. Confusion Matrix:
+   - Scroll to the very bottom to find the "=== Confusion Matrix ===" section.
+   - Example format:
+       a    b   <-- classified as
+      TP   FN |   a = approved
+      FP   TN |   b = rejected
+
+   - How to interpret:
+     * (a, a) = True Positives (TP): Actually approved, correctly predicted as approved.
+     * (a, b) = False Negatives (FN): Actually approved, incorrectly predicted as rejected.
+     * (b, a) = False Positives (FP): Actually rejected, incorrectly predicted as approved.
+     * (b, b) = True Negatives (TN): Actually rejected, correctly predicted as rejected.
+
+3. Area Under the ROC Curve (AUC):
+   - Look just above the Confusion Matrix at the table: "=== Detailed Accuracy By Class ==="
+   - Find the column header: "ROC Area".
+   - Report:
+     * The ROC Area for class "approved".
+     * The ROC Area for class "rejected".
+     * The "Weighted Avg." ROC Area at the bottom of the table.
+   - To visualize the ROC curve:
+     * In the "Result list" box (bottom-left), right-click on the result entry.
+     * Select "Visualize threshold curve" -> choose class "approved".
+     * A popup window displays the ROC curve and the exact AUC.
+
+
+--------------------------------------------------------------------------------
+STEP 6: EXPLAINING THE IMPACT OF EACH ATTRIBUTE
+--------------------------------------------------------------------------------
+Scroll up in the output window to the section titled:
+"=== Classifier model (full training set) ==="
+
+Here you will find the Logistic Regression equation and table:
+ln( P(approved) / (1 - P(approved)) ) = Intercept + β_Age * Age + β_Income * Income
+
+Look at the table columns: Variable, Coeff., Std. Dev., z-Val., p-Val., Odds Ratio.
+
+1. Income Impact:
+   - The coefficient (β_Income) is typically POSITIVE (Odds Ratio > 1.0).
+   - Explanation: As an applicant's income increases, their financial capacity 
+     to repay the loan improves, significantly increasing the probability/log-odds 
+     of the loan being approved.
+
+2. Age Impact:
+   - Examine the sign of the Age coefficient (β_Age):
+     * If POSITIVE (β > 0, Odds Ratio > 1.0): Older applicants are more likely 
+       to be approved, usually due to established credit history and financial stability.
+     * If NEGATIVE (β < 0, Odds Ratio < 1.0): Older applicants have slightly lower odds 
+       of approval, depending on the sample distribution.
+
+3. Statistical Significance (p-value):
+   - If p-value < 0.05: The attribute is statistically significant in predicting loan approval.
+   - If p-value >= 0.05: The attribute does not have a statistically significant effect.
+================================================================================

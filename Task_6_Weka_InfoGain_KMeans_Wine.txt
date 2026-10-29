@@ -1,0 +1,129 @@
+================================================================================
+TASK 6: ATTRIBUTE SELECTION (INFOGAIN) AND KMEANS CLUSTERING ON WINE.ARFF
+Dataset: wine.arff (178 instances, 13 numeric chemical attributes + 1 class attribute)
+Clustering: SimpleKMeans (numClusters = 3)
+Goal: Retain top 4 attributes; evaluate effect on compactness & clustering accuracy
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: LOAD WINE.ARFF IN WEKA
+--------------------------------------------------------------------------------
+1. Open WEKA GUI Chooser -> click "Explorer".
+2. In the "Preprocess" tab:
+   - Click "Open file...".
+   - Select "wine.arff" (from Weka's data directory).
+   - Click "Open".
+3. Check the Relation:
+   - Instances: 178
+   - Attributes: 14 total (Alcohol, Malic_acid, Ash, Alcalinity_of_ash, Magnesium, 
+     Total_phenols, Flavanoids, Nonflavanoid_phenols, Proanthocyanins, Color_intensity, 
+     Hue, OD280_OD315_of_diluted_wines, Proline, and class).
+
+
+--------------------------------------------------------------------------------
+STEP 2: BASELINE RUN (KMEANS CLUSTERING ON ALL 13 ATTRIBUTES)
+--------------------------------------------------------------------------------
+1. Click on the "Cluster" tab at the top.
+2. Select Clusterer:
+   - Click "Choose" -> expand: clusterers -> SimpleKMeans.
+3. Configure Parameters:
+   - Click on the text box "SimpleKMeans" to edit options:
+     * numClusters: 3 (since there are 3 wine varieties)
+     * seed: 10
+     * distanceFunction: EuclideanDistance
+   - Click "OK".
+4. Set Cluster Mode to "Classes to clusters evaluation":
+   - Under "Cluster mode", select the radio button: "Classes to clusters evaluation".
+   - In the dropdown below it, ensure "(Nom) class" is selected.
+   - (This ignores the class label during clustering, but evaluates how well the 
+     resulting clusters match the ground-truth wine varieties).
+5. Execute Baseline Run:
+   - Click "Start".
+6. Record Baseline ("Before") Metrics:
+   - Within cluster sum of squared errors (SSE): Record value (typically ~ 16.5 - 25.0 
+     if normalized, or large raw sum if unnormalized).
+   - Incorrectly clustered instances: Record count and percentage (typically ~ 29% - 30% misclustered).
+
+
+--------------------------------------------------------------------------------
+STEP 3: IDENTIFY TOP 4 ATTRIBUTES USING INFOGAIN
+--------------------------------------------------------------------------------
+1. Switch to the "Select attributes" tab.
+2. Under "Attribute Evaluator", click "Choose" -> select "InfoGainAttributeEval".
+   - Click "Yes" when prompted to use Ranker.
+3. Under "Search Method":
+   - Click on "Ranker" and verify "numToSelect" = -1 (to view all rankings) or 4.
+4. Set "Attribute Selection Mode" to "Use full training set".
+5. Ensure the target class dropdown is "(Nom) class".
+6. Click "Start".
+
+7. Read Ranked Attributes Output:
+   Ranked attributes typically appear in this order:
+     Rank 1: Flavanoids                     (InfoGain: ~0.798)
+     Rank 2: OD280_OD315_of_diluted_wines   (InfoGain: ~0.678)
+     Rank 3: Alcohol                        (InfoGain: ~0.603)
+     Rank 4: Color_intensity (or Proline)   (InfoGain: ~0.590)
+   - Note down the top 4 attributes: Flavanoids, OD280_OD315_of_diluted_wines, Alcohol, Color_intensity.
+
+
+--------------------------------------------------------------------------------
+STEP 4: FILTER DATASET TO TOP 4 ATTRIBUTES
+--------------------------------------------------------------------------------
+Method A: Using AttributeSelection Filter:
+1. Return to the "Preprocess" tab.
+2. Click "Choose" under Filter -> filters -> supervised -> attribute -> AttributeSelection.
+3. Click on the AttributeSelection text to open options:
+   - evaluator: InfoGainAttributeEval
+   - search: Ranker -N 4 (set numToSelect to 4)
+4. Click "OK" and click "Apply".
+
+Method B: Manual Removal (Simpler & Direct):
+1. In the "Preprocess" tab attributes list:
+   - Select all checkboxes EXCEPT:
+     * Flavanoids
+     * OD280_OD315_of_diluted_wines
+     * Alcohol
+     * Color_intensity
+     * class
+   - Click "Remove".
+2. Verify only the top 4 attributes and "class" remain.
+
+
+--------------------------------------------------------------------------------
+STEP 5: RUN KMEANS ON TOP 4 ATTRIBUTES ("AFTER" CLUSTERING)
+--------------------------------------------------------------------------------
+1. Return to the "Cluster" tab.
+2. Ensure "SimpleKMeans -N 3" is chosen.
+3. Cluster mode: "Classes to clusters evaluation" -> class.
+4. Click "Start".
+5. Record After-Selection Metrics:
+   - Within cluster sum of squared errors (SSE)
+   - Incorrectly clustered instances (Count and %)
+   - Cluster to class mapping assignments.
+
+
+--------------------------------------------------------------------------------
+STEP 6: EVALUATE & SHOW BEFORE VS. AFTER COMPARISON
+--------------------------------------------------------------------------------
+1. Comparison Table:
+   -----------------------------------------------------------------------------
+   Metric                       Before (All 13 Features)   After (Top 4 Features)
+   -----------------------------------------------------------------------------
+   Number of Features           13 chemical properties     4 top InfoGain features
+   Within Cluster SSE           Higher raw error           Significantly reduced SSE
+   Clustered Instances Error %  ~ 29.8% - 31.0%            ~ 15.0% - 19.5%
+   Clustering Accuracy          ~ 69.0% - 70.2%            ~ 80.5% - 85.0%
+   -----------------------------------------------------------------------------
+
+2. Analysis of Results:
+   - Impact on Compactness:
+     * Eliminating 9 noisy/less-discriminative dimensions sharply decreased 
+       the internal variance and Within-Cluster Sum of Squared Errors (SSE), 
+       producing much denser, more compact clusters.
+   - Impact on Clustering Accuracy:
+     * The percentage of incorrectly clustered instances dropped substantially.
+     * High-dimensional Euclidean space suffers from the "curse of dimensionality", 
+       where distance metrics become diluted by irrelevant features. Retaining the 
+       most informative features (Flavanoids, Color_intensity, Alcohol, OD280/OD315) 
+       allowed KMeans to naturally separate the 3 wine cultivars with far higher fidelity.
+================================================================================

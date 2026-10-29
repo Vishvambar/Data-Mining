@@ -1,0 +1,100 @@
+================================================================================
+TASK 11: PROFIT MARGIN AND REGIONAL ANALYSIS IN TABLEAU
+Dataset: Sample - Superstore (or Superstore.xls / .csv)
+Operations: Calculated Field (Profit Margin) -> Regional Aggregations -> Bar Chart -> Color Encoding -> Business Insights
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: OPEN DATASET IN TABLEAU
+--------------------------------------------------------------------------------
+1. Launch Tableau Desktop.
+2. Under "Connect" on the left panel:
+   - If using the built-in sample, click "Sample - Superstore" under "Saved Data Sources".
+   - Or click "Microsoft Excel" / "Text file", browse to your Superstore file, and open it.
+3. Drag the "Orders" table into the Canvas area if not automatically loaded.
+4. Click on "Sheet 1" at the bottom to open the worksheet interface.
+
+
+--------------------------------------------------------------------------------
+STEP 2: CREATE CALCULATED FIELD: "PROFIT MARGIN"
+--------------------------------------------------------------------------------
+1. In the "Data" pane on the far left, click the small dropdown arrow next to the 
+   search bar, OR right-click any blank area in the Data pane.
+2. Select "Create Calculated Field...".
+3. In the calculation editor dialog:
+   - Name the field at the top: Profit Margin (%)
+   - Enter the exact formula:
+     (SUM([Profit]) / SUM([Sales])) * 100
+     *(Note: Using SUM([Profit]) / SUM([Sales]) is essential in Tableau so that it calculates 
+     the true weighted margin at the aggregated regional level, rather than averaging raw row ratios).*
+4. Verify that the bottom says: "The calculation is valid."
+5. Click "OK".
+6. Format as Percentage/Number:
+   - In the Data pane, right-click on the new "Profit Margin (%)" measure.
+   - Select "Default Properties" -> "Number Format...".
+   - Select "Number (Custom)" -> Decimal places: 2 -> Suffix: "%" (or select Percentage).
+   - Click "OK".
+
+
+--------------------------------------------------------------------------------
+STEP 3: BUILD THE BAR CHART FOR REGIONAL SALES & AVERAGE PROFIT
+--------------------------------------------------------------------------------
+1. Place Dimensions:
+   - From the Data pane, drag "Region" to the **Rows** shelf.
+     (You will see 4 rows: Central, East, South, West).
+2. Place Measures for Total Sales and Average Profit:
+   - Drag "Sales" to the **Columns** shelf. (It will default to `SUM(Sales)`).
+   - Drag "Profit" to the **Columns** shelf next to `SUM(Sales)`.
+   - By default, it will be `SUM(Profit)`.
+   - To change it to Average Profit as requested:
+     * Right-click on the `SUM(Profit)` pill on the Columns shelf.
+     * Go to "Measure (Sum)" -> select **"Average"**.
+     * The pill now displays as `AVG(Profit)`.
+3. You now have two side-by-side horizontal bar charts comparing Total Sales and Average Profit per Region.
+
+
+--------------------------------------------------------------------------------
+STEP 4: APPLY COLOR ENCODING TO HIGHLIGHT PROFIT MARGIN
+--------------------------------------------------------------------------------
+1. Locate the **Marks** card (to the left of the chart area).
+2. Notice the tabs under Marks: "All", "SUM(Sales)", and "AVG(Profit)".
+3. Click on the **All** tab (or the specific measure tab you want to color).
+4. Drag your calculated field **`Profit Margin (%)`** from the Data pane and drop it onto the **Color** tile on the Marks card.
+5. Customize Color Palette:
+   - In the Color Legend appearing on the right, click the small dropdown arrow -> select "Edit Colors...".
+   - In the Palette dropdown, select **"Red-Green Diverging"** (or "Orange-Blue Diverging").
+   - Check the box: "Include Totals" (if totals are on) or "Stepped Color" (e.g., 5 steps).
+   - Click "Advanced >>":
+     * Set "Center" to: 0 (or set to average margin ~ 12%).
+     * Setting Center to 0 ensures any negative/loss-making margins show bright red, 
+       while profitable margins show green.
+   - Click "Apply" and "OK".
+6. Add Data Labels:
+   - Click on the **Label** tile on the Marks card -> check "Show mark labels".
+
+
+--------------------------------------------------------------------------------
+STEP 5: INSIGHTS ON REGIONAL PROFIT MARGIN VARIATIONS
+--------------------------------------------------------------------------------
+Observe the generated visual:
+1. West Region:
+   - Highest Profit Margin (~14.8% - 15.2%).
+   - High Total Sales combined with the highest Average Profit per order.
+   - Indicates healthy pricing power, lower shipping costs, and strong product mix.
+
+2. East Region:
+   - Strong second place (~13.5% - 14.0% margin) with consistent total sales volume.
+
+3. South Region:
+   - Moderate Profit Margin (~11.9%). Lower overall sales volume compared to East and West.
+
+4. Central Region:
+   - Lowest Profit Margin (~7.9% - 8.5%).
+   - Despite generating substantial Total Sales, the profit margin is severely depressed.
+   - Root Cause Analysis: The Central region suffers from aggressive discounting 
+     (e.g., in Texas, Illinois, and Ohio) which erodes margins.
+
+Business Strategic Recommendations:
+- Restructure discount policies in the Central region to stem profit leakage.
+- Replicate promotional strategies and inventory mix from the West region across Central branches.
+================================================================================

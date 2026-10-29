@@ -1,0 +1,88 @@
+================================================================================
+TASK 17: EMPLOYEES AND DEPARTMENTS LEFT JOIN & TREEMAP IN TABLEAU
+Datasets: Employees.csv and Departments.csv
+Operations: Left Join on Department_ID -> Treemap of Employee Headcount -> Identify Unmatched Records -> Left Join Data Retention Analysis
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: PERFORM LEFT JOIN IN TABLEAU DATA SOURCE
+--------------------------------------------------------------------------------
+1. Launch Tableau Desktop.
+2. Under "Connect", click "Text file" -> select "Employees.csv" and open it.
+3. Access the Physical Join Layer:
+   - In Tableau 2020.2+, the canvas defaults to the Relationship (Logical) layer.
+   - To perform a classic database **Left Join**:
+     * Double-click the "Employees" logical box on the canvas to open the Physical Table layer.
+4. Add the Second Dataset:
+   - In the left pane under "Connections", click "Add" (or select from existing files).
+   - Select "Departments.csv".
+5. Set Up the Join:
+   - Drag "Departments" to the right of "Employees".
+   - A join line and Venn diagram icon will appear between them.
+   - Click on the Venn diagram icon:
+     * Select **"Left"** join type (the icon where the left circle is fully shaded).
+     * Set the Data Source Field: `[Department ID]` (from Employees).
+     * Operator: `=`
+     * Set the Right Field: `[Department ID]` (from Departments).
+6. Verify Data Grid:
+   - In the preview grid at the bottom, verify that all employee rows are visible, 
+     accompanied by their corresponding Department Name.
+7. Click "Sheet 1" to proceed to the worksheet.
+
+
+--------------------------------------------------------------------------------
+STEP 2: CREATE A TREEMAP SHOWING EMPLOYEES PER DEPARTMENT
+--------------------------------------------------------------------------------
+1. Configure Dimensions and Measures:
+   - Drag **"Department Name"** (from Departments) onto the **Label** tile on the Marks card.
+   - Drag **"Employee ID"** (from Employees) onto the **Size** tile on the Marks card.
+   - Right-click the `Employee ID` pill on Size -> select "Measure" -> **"Count"** (or `CNT(Employee ID)`).
+2. Set Mark Type:
+   - On the Marks card, ensure the mark dropdown is set to **"Square"** (Tableau's treemap mark type).
+   - Alternatively, open "Show Me" in the top-right corner and click on the **Treemap** icon.
+3. Add Color Encoding:
+   - Drag `CNT(Employee ID)` (or "Department Name") onto the **Color** tile on the Marks card.
+4. Add Labels:
+   - Drag `CNT(Employee ID)` onto the **Label** tile.
+   - Click "Label" on Marks card -> edit text to show:
+     <Department Name>
+     Headcount: <CNT(Employee ID)>
+5. Treemap Appearance:
+   - Large rectangles represent larger departments (e.g., Sales, Engineering, Operations).
+   - Smaller rectangles represent smaller departments (e.g., Legal, Executive).
+
+
+--------------------------------------------------------------------------------
+STEP 3: IDENTIFY MISSING OR UNMATCHED EMPLOYEE RECORDS
+--------------------------------------------------------------------------------
+1. Locating Unmatched Records in the Treemap:
+   - Look for a rectangle labeled **"Null"** (or blank).
+   - Any employee assigned to an invalid, blank, or obsolete `Department ID` that 
+     does not exist in `Departments.csv` will be grouped under **`Department Name = Null`**.
+
+2. Detailed Inspection of Unmatched Records:
+   - Right-click the "Null" rectangle in the Treemap -> click **"View Data..."**.
+   - Switch to the "Full Data" tab in the pop-up window.
+   - Inspect the specific `Employee ID`, `Employee Name`, and the unmatched `Department ID`.
+   - This directly flags orphaned records requiring master data correction.
+
+
+--------------------------------------------------------------------------------
+STEP 4: HOW DOES A LEFT JOIN HELP RETAIN ALL EMPLOYEE DATA?
+--------------------------------------------------------------------------------
+1. Mathematical Definition of Left Join ($Employees \mathbin{⟕} Departments$):
+   - A Left Join guarantees that **every single record from the left table (Employees) 
+     is preserved** in the output, regardless of whether a matching record exists in the right table.
+
+2. Prevention of Data Leakage (Headcount & Payroll Integrity):
+   - If an **Inner Join** were used instead:
+     * Any employee with a typo in their `Department_ID` (e.g., `DEP_999`), a newly created 
+       department not yet added to the master table, or a blank/null department ID would be 
+       **silently dropped** from the entire analysis.
+     * This would artificially deflate total company headcount, skew payroll aggregations, 
+       and cause inaccurate compliance reporting.
+
+3. Auditing & Data Governance Utility:
+   - By retaining all rows and populating unmatched department fields with `NULL`, the 
+     analyst can instantly detect and audit data anomalies without losing employee records.
+================================================================================

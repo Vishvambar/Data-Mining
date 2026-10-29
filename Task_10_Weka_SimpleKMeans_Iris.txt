@@ -1,0 +1,116 @@
+================================================================================
+TASK 10: SIMPLEKMEANS CLUSTERING (K=3) ON IRIS.ARFF IN WEKA
+Dataset: iris.arff (150 instances: 50 Setosa, 50 Versicolor, 50 Virginica)
+Attributes: sepallength, sepalwidth, petallength, petalwidth, class
+Algorithm: SimpleKMeans (numClusters = 3)
+Operations: Run Clustering -> Visualize Assignments -> Feature Contribution Analysis -> Save Output
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: LOAD IRIS.ARFF IN WEKA
+--------------------------------------------------------------------------------
+1. Launch WEKA GUI Chooser -> click "Explorer".
+2. In the "Preprocess" tab:
+   - Click "Open file...".
+   - Locate and select "iris.arff" (located in Weka's data directory).
+   - Click "Open".
+3. Check Dataset Structure:
+   - Instances: 150
+   - Attributes: 5
+     1. sepallength (Numeric)
+     2. sepalwidth (Numeric)
+     3. petallength (Numeric)
+     4. petalwidth (Numeric)
+     5. class (Nominal: Iris-setosa, Iris-versicolor, Iris-virginica)
+
+
+--------------------------------------------------------------------------------
+STEP 2: CONFIGURE AND RUN SIMPLEKMEANS (K=3)
+--------------------------------------------------------------------------------
+1. Click on the "Cluster" tab at the top.
+2. Select Clusterer:
+   - Click "Choose" -> expand: clusterers -> SimpleKMeans.
+3. Configure Parameters:
+   - Click on the text box "SimpleKMeans" to open properties:
+     * numClusters: 3 (matching the 3 ground-truth iris species)
+     * distanceFunction: weka.core.EuclideanDistance
+     * seed: 10
+     * maxIterations: 500
+   - Click "OK".
+4. Set Cluster Mode to "Classes to clusters evaluation":
+   - Under "Cluster mode", select the radio button: "Classes to clusters evaluation".
+   - In the dropdown directly below it, select "(Nom) class".
+   - (This runs unsupervised clustering strictly on the 4 numeric dimensions without 
+     using the class label, then evaluates how well the 3 found clusters map to the 3 species).
+5. Click "Start".
+
+
+--------------------------------------------------------------------------------
+STEP 3: SAVE AND INTERPRET THE CLUSTER OUTPUT
+--------------------------------------------------------------------------------
+1. Save Output to File:
+   - In the "Result list" panel (bottom-left), right-click on the result entry:
+     "SimpleKMeans -N 3...".
+   - Select "Save result buffer".
+   - Save the file as "iris_kmeans_output.txt".
+
+2. Interpret the Output:
+   a. Final Cluster Centroids Table:
+      Attribute        Full Data (150)    Cluster 0        Cluster 1        Cluster 2
+      --------------------------------------------------------------------------------
+      sepallength      5.8433             5.006            5.9016           6.8538
+      sepalwidth       3.0573             3.428            2.7484           3.0769
+      petallength      3.758              1.462            4.3935           5.7410
+      petalwidth       1.1993             0.246            1.4339           2.0718
+
+   b. Classes to Clusters Mapping:
+        0   1   2  <-- assigned to cluster
+       50   0   0 | Iris-setosa
+        0  48   2 | Iris-versicolor
+        0  14  36 | Iris-virginica
+
+   c. Cluster Performance Metrics:
+      - Within cluster sum of squared errors: ~ 6.99 (if standardized) or ~ 39.8
+      - Incorrectly clustered instances: 16 instances (10.67%)
+      - Clustering Accuracy: 89.33% (134 out of 150 correctly clustered)
+      - Key Insight: Iris-setosa is 100% cleanly separated (0 errors). 
+        The only clustering overlap occurs between Versicolor and Virginica (16 instances), 
+        which naturally blend in physical dimensions.
+
+
+--------------------------------------------------------------------------------
+STEP 4: VISUALIZE CLUSTERS USING "VISUALIZE CLUSTER ASSIGNMENTS"
+--------------------------------------------------------------------------------
+1. In the "Result list" (bottom-left), right-click on the completed SimpleKMeans result.
+2. Select "Visualize cluster assignments".
+3. In the visualization window:
+   - Set X-axis: "petallength"
+   - Set Y-axis: "petalwidth"
+   - Set Color: "Cluster"
+4. Visual Observations:
+   - Notice that Cluster 0 (Setosa) forms an isolated, compact group in the bottom-left corner.
+   - Clusters 1 and 2 (Versicolor and Virginica) form two adjacent elongated clusters.
+5. Switch Axes:
+   - Change X-axis to "sepallength" and Y-axis to "sepalwidth".
+   - Notice that sepal dimensions exhibit significant overlap and much poorer cluster separation.
+
+
+--------------------------------------------------------------------------------
+STEP 5: ANALYZE WHICH ATTRIBUTES CONTRIBUTED MOST TO CLUSTER FORMATION
+--------------------------------------------------------------------------------
+1. Petal Length and Petal Width (PRIMARY CONTRIBUTORS):
+   - Petal measurements contribute the most to cluster formation:
+     * Petal Length jumps from 1.46 (Cluster 0) -> 4.39 (Cluster 1) -> 5.74 (Cluster 2).
+       (A massive ~300% range of variation across centroids).
+     * Petal Width jumps from 0.25 (Cluster 0) -> 1.43 (Cluster 1) -> 2.07 (Cluster 2).
+   - In Euclidean distance calculations, these large, distinct gaps create dominant 
+     separation vectors that dictate which centroid an instance is attracted to.
+
+2. Sepal Width and Sepal Length (SECONDARY CONTRIBUTORS):
+   - Sepal Length shows moderate separation (5.0 -> 5.9 -> 6.85).
+   - Sepal Width shows minimal centroid variation (3.43 -> 2.75 -> 3.08) and has almost 
+     no discriminatory power between Versicolor and Virginica.
+
+Conclusion:
+Petal Length and Petal Width are the two decisive geometric features driving Iris cluster formation.
+================================================================================

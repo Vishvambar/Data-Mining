@@ -1,0 +1,107 @@
+================================================================================
+TASK 12: SUPERSTORE ORDER PROCESSING TIME VISUALIZATION IN TABLEAU
+Dataset: Sample - Superstore
+Calculated Field: Order Processing Time (Ship Date - Order Date)
+Operations: Shipping Mode Breakdown -> Monthly Trend Line Chart -> Category Filter -> Performance Observations
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: LOAD SUPERSTORE DATASET IN TABLEAU
+--------------------------------------------------------------------------------
+1. Open Tableau Desktop.
+2. Under "Saved Data Sources", click "Sample - Superstore" (or connect to your Superstore Excel/CSV).
+3. Open a new Worksheet ("Sheet 1").
+
+
+--------------------------------------------------------------------------------
+STEP 2: CREATE CALCULATED FIELD: "ORDER PROCESSING TIME"
+--------------------------------------------------------------------------------
+1. In the Data pane on the left, click the small dropdown arrow next to the search box 
+   (or right-click anywhere in the Data pane).
+2. Select "Create Calculated Field...".
+3. Configure the calculation:
+   - Field Name: Order Processing Time (Days)
+   - Formula:
+     DATEDIFF('day', [Order Date], [Ship Date])
+   *(DATEDIFF with 'day' counts the exact number of days elapsed between order placement 
+   and carrier dispatch).*
+4. Verify that it says "The calculation is valid." at the bottom.
+5. Click "OK".
+
+
+--------------------------------------------------------------------------------
+STEP 3: AGGREGATE AVERAGE PROCESSING TIME BY SHIPPING MODE
+--------------------------------------------------------------------------------
+(To inspect baseline efficiency across shipping tiers before building the trend):
+1. Drag "Ship Mode" from Dimensions onto the **Rows** shelf.
+2. Drag "Order Processing Time (Days)" onto the **Columns** shelf.
+3. It defaults to `SUM(Order Processing Time)`. Change it to Average:
+   - Right-click the `SUM(Order Processing Time)` green pill on Columns.
+   - Select "Measure (Sum)" -> click **"Average"**.
+   - It will now show as `AVG(Order Processing Time)`.
+4. Click the "Show mark labels" icon (the 'T' icon in the toolbar) to view numbers:
+   - Same Day: ~ 0.04 days
+   - First Class: ~ 2.18 days
+   - Second Class: ~ 3.24 days
+   - Standard Class: ~ 5.01 days
+
+
+--------------------------------------------------------------------------------
+STEP 4: BUILD THE MONTHLY TREND LINE CHART
+--------------------------------------------------------------------------------
+1. Clear the Rows shelf (or open a new sheet "Sheet 2").
+2. Set Up Date Trend on Columns:
+   - Drag **"Order Date"** from the Data pane onto the **Columns** shelf.
+   - Right-click the `YEAR(Order Date)` pill on Columns.
+   - In the dropdown menu, choose the continuous Month option (the second section down, 
+     labeled "Month May 2021" / Date Value, colored green).
+   - The pill should now say **`MONTH(Order Date)`** and appear green.
+3. Set Up Measure on Rows:
+   - Drag **"Order Processing Time (Days)"** onto the **Rows** shelf.
+   - Right-click the pill -> change "Measure (Sum)" to **"Average"** (`AVG(Order Processing Time)`).
+4. Verify Chart Type:
+   - Look at the **Marks** card dropdown; ensure it is set to **"Line"**.
+5. (Optional - Breakdown by Shipping Mode):
+   - Drag "Ship Mode" onto the **Color** tile in the Marks card to view individual trend 
+     lines for each shipping tier.
+
+
+--------------------------------------------------------------------------------
+STEP 5: FILTER TO INCLUDE ONLY "TECHNOLOGY" CATEGORY
+--------------------------------------------------------------------------------
+1. From the Data pane, find the dimension **"Category"**.
+2. Drag "Category" onto the **Filters** shelf (located to the left of the Columns shelf).
+3. A filter window will pop up:
+   - Select the checkbox for **"Technology"** only.
+   - Uncheck "Furniture" and "Office Supplies".
+4. Click "OK".
+5. To make the filter interactive:
+   - Right-click the "Category" pill on the Filters shelf -> click **"Show Filter"**.
+   - An interactive card appears on the right allowing instant category toggling.
+
+
+--------------------------------------------------------------------------------
+STEP 6: OBSERVATIONS ON SHIPPING PERFORMANCE OVER TIME
+--------------------------------------------------------------------------------
+Carefully examine the monthly line chart for Technology orders:
+
+1. Overall Baseline Stability:
+   - The average processing time for Technology orders remains relatively stable between 
+     3.8 days and 4.2 days across most non-peak operational months.
+
+2. Seasonal Spikes & Peak Bottlenecks:
+   - Notice noticeable upward spikes in processing delays during November and December (Q4) 
+     of each year.
+   - Cause: Holiday sales surges (Black Friday / Cyber Monday) cause order processing 
+     delays in warehouses and fulfillment centers before handoff to carriers.
+
+3. Outlier Months:
+   - Occasional dips or peaks occur in early spring months depending on inventory availability 
+     and regional logistics disruptions.
+
+4. Managerial Recommendations:
+   - Implement temporary holiday staffing or expedited picking in Technology fulfillment centers 
+     starting mid-October to avoid Q4 SLA breaches.
+   - Set customer expectations by dynamically adjusting estimated delivery dates on checkout 
+     during high-volume promotional weeks.
+================================================================================

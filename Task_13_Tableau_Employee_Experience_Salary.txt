@@ -1,0 +1,127 @@
+================================================================================
+TASK 13: EXPERIENCE-BASED SALARY ANALYSIS IN TABLEAU
+Dataset: HR Analytics Dataset (or Employee dataset with Experience and Salary)
+Fields: Experience (or TotalWorkingYears), Salary (or MonthlyIncome)
+Operations: Seniority Calculated Field -> Pie Chart -> Percentage Labels & Tooltips -> Distribution Inference
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: CONNECT TO DATASET IN TABLEAU
+--------------------------------------------------------------------------------
+1. Open Tableau Desktop.
+2. Under "Connect", click "Microsoft Excel" or "Text file" (CSV) depending on your file.
+3. Select your HR dataset (e.g., HR_Analytics.csv or IBM_Attrition.csv).
+4. Go to "Sheet 1".
+5. Note: If your dataset uses standard IBM HR column names:
+   - "TotalWorkingYears" or "YearsAtCompany" represents Experience.
+   - "MonthlyIncome" represents Salary.
+
+
+--------------------------------------------------------------------------------
+STEP 2: CREATE CALCULATED FIELD: "SENIORITY LEVEL"
+--------------------------------------------------------------------------------
+1. In the Data pane, right-click on an empty space and choose "Create Calculated Field...".
+2. Configure the field:
+   - Field Name: Seniority Level
+   - Enter Formula:
+     IF [Experience] > 5 THEN "Senior"
+     ELSE "Junior"
+     END
+
+   *(Note: If using IBM HR dataset columns, replace [Experience] with [TotalWorkingYears]):
+     IF [TotalWorkingYears] > 5 THEN "Senior"
+     ELSE "Junior"
+     END
+3. Verify that the calculation editor says "The calculation is valid."
+4. Click "OK".
+5. "Seniority Level" will now appear under Dimensions in the Data pane.
+
+
+--------------------------------------------------------------------------------
+STEP 3: CONSTRUCT THE PIE CHART
+--------------------------------------------------------------------------------
+1. Switch Mark Type to Pie:
+   - On the **Marks** card, click the dropdown menu (currently "Automatic") and select **"Pie"**.
+   - Notice new tiles appear on the Marks card: **"Color"**, **"Size"**, **"Angle"**, **"Detail"**, **"Tooltip"**.
+
+2. Add Color Slice Dimension:
+   - Drag **"Seniority Level"** from Dimensions onto the **Color** tile.
+   - You will see a small pie with two colors (Senior and Junior).
+
+3. Encode Slice Proportions by Total Salary:
+   - Drag **"Salary"** (or **"MonthlyIncome"**) from Measures onto the **Angle** tile.
+   - The pill becomes `SUM(Salary)`. The angle/size of each pie slice now reflects 
+     the total payroll expenditure for that group.
+
+4. Adjust Overall Size:
+   - In the top toolbar, change the view dropdown from "Standard" to **"Entire View"**.
+   - Click on the **Size** tile on the Marks card and drag the slider to the right 
+     to enlarge the pie chart so it is clearly visible.
+
+
+--------------------------------------------------------------------------------
+STEP 4: ADD PERCENTAGE LABELS TO THE PIE CHART
+--------------------------------------------------------------------------------
+1. Add Category Label:
+   - Drag "Seniority Level" from the Data pane onto the **Label** tile.
+2. Add Percentage of Total Salary:
+   - Drag "Salary" (or "MonthlyIncome") from the Data pane onto the **Label** tile.
+   - Currently, it shows the raw currency total (`SUM(Salary)`).
+   - Convert it to Percentage:
+     * Right-click the `SUM(Salary)` pill that is on the **Label** tile.
+     * Go to **Quick Table Calculation** -> select **"Percent of Total"**.
+     * The label on the pie slices will now display exact percentages (e.g., 78.4% and 21.6%).
+3. Format the Percentage:
+   - Right-click that same pill on the Label tile -> "Format...".
+   - In the Format pane on the left, under Numbers, choose "Percentage" -> 1 decimal place.
+
+
+--------------------------------------------------------------------------------
+STEP 5: CONFIGURE TOOLTIPS TO DISPLAY AVERAGE SALARY PER GROUP
+--------------------------------------------------------------------------------
+1. Add Average Salary to Marks:
+   - Drag "Salary" (or "MonthlyIncome") from the Data pane onto the **Tooltip** tile on the Marks card.
+   - It will initially show as `SUM(Salary)`.
+   - Change it to Average:
+     * Right-click that `SUM(Salary)` pill on Tooltip.
+     * Select "Measure (Sum)" -> click **"Average"**.
+     * The pill changes to `AVG(Salary)`.
+2. Format the Average Salary as Currency:
+   - Right-click the `AVG(Salary)` pill on Tooltip -> select "Format...".
+   - Under Numbers, select "Currency (Custom)" -> Prefix: "$" or "₹", 0 decimal places.
+3. Customize the Tooltip Text:
+   - Click directly on the **Tooltip** tile on the Marks card to open the text editor.
+   - Format the text cleanly as follows:
+     ------------------------------------------------------------------
+     Seniority Group: <Seniority Level>
+     Total Payroll Share: <% of Total SUM(Salary)>
+     Total Salary Paid: <SUM(Salary)>
+     Average Salary per Employee: <AVG(Salary)>
+     ------------------------------------------------------------------
+   - Click "OK".
+
+
+--------------------------------------------------------------------------------
+STEP 6: INFERENCES ON SALARY DISTRIBUTION (SENIOR VS. JUNIOR)
+--------------------------------------------------------------------------------
+Key Insights from the Visualizations:
+
+1. Disproportionate Payroll Concentration:
+   - Senior employees (> 5 years experience) absorb approximately 75% to 82% of the company's 
+     total payroll budget, while Junior employees account for only 18% to 25%.
+
+2. Significant Average Pay Gap:
+   - The Average Salary for Senior employees is typically 2.5x to 3.5x higher than that of Juniors.
+   - Cause: Experience-based pay progression, compound annual merit increases, and higher 
+     managerial/specialist job grades held by seniors.
+
+3. Headcount vs. Cost Leverage:
+   - Even in organizations where junior staff represent 40-50% of the headcount, their 
+     collective cost footprint remains modest.
+
+4. Strategic HR Implications:
+   - Senior attrition carries severe financial and institutional disruption: replacing a 
+     senior employee incurs high recruiting and onboarding costs.
+   - Junior compensation must be benchmarked competitively to ensure retention through the 
+     formative 0-5 year development pipeline.
+================================================================================

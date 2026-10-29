@@ -1,0 +1,143 @@
+================================================================================
+TASK 2: LINEAR REGRESSION TO PREDICT PRICE USING HOUSING.ARFF IN WEKA
+Dataset: housing.arff (Standard Boston Housing Dataset)
+Target Variable: Price (numeric / continuous, often labeled 'class' or 'Price' / 'MEDV')
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: LOCATE AND LOAD THE DATASET
+--------------------------------------------------------------------------------
+1. Locate housing.arff:
+   - Weka includes standard benchmark datasets by default.
+   - Typically located in:
+     * Windows: C:\Program Files\Weka-3-x-x\data\housing.arff
+     * Linux: /usr/share/weka/data/housing.arff (or inside weka.jar / datasets folder).
+   - If downloading manually, it corresponds to the standard Boston Housing dataset.
+
+2. Launch Weka:
+   - Open the "WEKA GUI Chooser".
+   - Click the "Explorer" button (top left).
+   - You will start on the "Preprocess" tab.
+
+3. Load the File:
+   - Click "Open file..." at the top-right of the Preprocess pane.
+   - Navigate to the folder containing housing.arff.
+   - Select "housing.arff" and click "Open".
+
+4. Verify Data in Preprocess Tab:
+   - Under the "Current relation" section, verify:
+     * Relation: housing
+     * Instances: 506
+     * Attributes: 14 (CRIM, ZN, INDUS, CHAS, NOX, RM, AGE, DIS, RAD, TAX, PTRATIO, B, LSTAT, and the target price attribute, usually 'class' or 'MEDV').
+   - Check the target attribute (Price/class):
+     * Click on the target attribute in the Attributes list.
+     * In the "Selected attribute" box on the right, verify that Type is "Numeric".
+
+
+--------------------------------------------------------------------------------
+STEP 2: CONFIGURE AND RUN LINEAR REGRESSION
+--------------------------------------------------------------------------------
+1. Switch to the "Classify" tab at the top of the Weka window (the 2nd tab).
+2. Choose the Classifier:
+   - Click the "Choose" button under the "Classifier" header.
+   - Expand the tree:
+     classifiers -> functions -> LinearRegression
+     (Full class: weka.classifiers.functions.LinearRegression)
+3. Set Test Options:
+   - Select the "Cross-validation" radio button.
+   - Set "Folds:" to 10 (standard 10-fold cross-validation for robust evaluation).
+   - Alternatively, if testing on training set is desired, select "Use training set".
+4. Set Target Class:
+   - Look at the dropdown directly under "Test options".
+   - Ensure the continuous numeric attribute representing price is selected:
+     e.g., "(Num) class" or "(Num) Price".
+5. Execute:
+   - Click the "Start" button on the right side.
+   - Wait for the bird icon at the bottom-right to stop animating.
+
+
+--------------------------------------------------------------------------------
+STEP 3: LOCATE AND REPORT EVALUATION METRICS
+--------------------------------------------------------------------------------
+Look at the "Classifier output" window on the right side under the section titled:
+"=== Cross-validation ===" (or "=== Summary ===")
+
+Locate and report the following required values:
+
+1. Correlation Coefficient:
+   - Line: "Correlation coefficient                  0.85xx" (typically between 0.84 and 0.86)
+   - Meaning: Measures the strength and direction of the linear relationship between
+     actual house prices and predicted house prices.
+     * Value close to +1.0 indicates a very strong positive linear relationship.
+
+2. Mean Absolute Error (MAE):
+   - Line: "Mean absolute error                     3.2xxx" (typically around 3.2 to 3.4)
+   - Meaning: The average magnitude of the errors between predictions and actual prices,
+     measured in the original units of price ($1,000s in the Boston dataset). An MAE
+     of 3.27 means the model's predictions deviate by an average of ~$3,270.
+
+3. Other Supplementary Metrics (Good to mention):
+   - Root mean squared error (RMSE): Typically around 4.8 to 4.9.
+   - Relative absolute error (RAE): Typically ~48%.
+   - Total Number of Instances: 506.
+
+
+--------------------------------------------------------------------------------
+STEP 4: INTERPRET THE MODEL OUTPUT (REGRESSION EQUATION)
+--------------------------------------------------------------------------------
+Scroll up in the Classifier output window to:
+"=== Classifier model (full training set) ==="
+
+Linear Regression builds an equation of the form:
+Price = w0 + w1*Attribute1 + w2*Attribute2 + ...
+
+Example Weka output equation:
+class =
+     -0.108  * CRIM +
+      0.0464 * ZN +
+      0.0206 * INDUS +
+      2.6867 * CHAS = 1 +
+     -17.7666 * NOX +
+      3.8099 * RM +
+      0.0007 * AGE +
+     -1.4756 * DIS +
+      0.306  * RAD +
+     -0.0123 * TAX +
+     -0.9527 * PTRATIO +
+      0.0093 * B +
+     -0.5248 * LSTAT +
+     36.4595
+
+Interpretation of Key Attributes:
+1. Positive Impact:
+   - RM (average number of rooms per dwelling): Coefficient ~ +3.81.
+     * For every additional room in a house, the predicted price increases by ~$3,810.
+   - CHAS (Charles River dummy variable): Coefficient ~ +2.69.
+     * Houses tract bounding the Charles River command an average premium of ~$2,690.
+   - ZN (proportion of residential land zoned for lots over 25,000 sq.ft.): Positive coefficient (+0.046).
+
+2. Negative Impact:
+   - NOX (nitric oxides concentration in ppm): Large negative coefficient (~ -17.77).
+     * Severe air pollution strongly decreases residential property values.
+   - LSTAT (% lower status of the population): Coefficient ~ -0.52.
+     * Higher proportions of lower socioeconomic status correlate with lower market prices.
+   - PTRATIO (pupil-teacher ratio by town): Coefficient ~ -0.95.
+     * Worse school ratios (more students per teacher) negatively impact home prices.
+   - DIS (weighted distances to five Boston employment centres): Negative coefficient (~ -1.48).
+
+
+--------------------------------------------------------------------------------
+STEP 5: COMMENT ON THE MODEL'S PERFORMANCE
+--------------------------------------------------------------------------------
+Write the following summary analysis:
+1. Predictive Capability:
+   - With a correlation coefficient of ~0.85, the model captures approximately 72% 
+     of the variance (R-squared ~ 0.85^2 ≈ 0.72) in housing prices.
+2. Error Magnitude:
+   - An MAE of ~3.3 on median house values ranging from $5,000 to $50,000 shows reasonable 
+     accuracy for a basic baseline linear model.
+3. Limitations of Linear Regression:
+   - Several real-world relationships in housing (e.g., pollution vs. price, distance vs. price) 
+     are non-linear and may involve interactions that a plain linear model cannot fully capture.
+   - Extreme values/outliers (such as capped $50k homes in Boston housing) increase the RMSE.
+================================================================================

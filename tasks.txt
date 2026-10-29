@@ -1,0 +1,163 @@
+MIT ADT University, Pune1 You are given a dataset containing Age, Income, and Loan_Status (approved/rejected).
+ Perform the following using WEKA:
+Load the dataset into WEKA.
+Apply the Logistic Regression classifier to predict Loan_Status. Use 10-fold cross-validation.
+Report the classification accuracy, confusion matrix, and AUC.
+Explain the impact of each attribute on prediction.
+https://www.kaggle.com/datasets/taweilo/loan-approval-classification-data
+2 Use housing.arff dataset.
+Perform the following tasks in WEKA:
+Load the dataset into WEKA.
+Use the Linear Regression algorithm to predict Price. Report the correlation coefficient and mean absolute error. Interpret the model output (regression equation).
+Comment on the model’s performance.
+3 Use the CarPrice.arff dataset.
+Apply Linear Regression to predict price based on enginesize, horsepower, and curbweight.Use 66% split for training.
+Save the trained model and interpret coefficients.
+Compare performance with default settings vs. feature selection enabled.
+https://www.kaggle.com/datasets/ngawangchoeda/car-price-dataset
+4 Load the diabetes.arff dataset.
+Apply Logistic Regression to classify if a person is diabetic or not.
+Analyze the confusion matrix and ROC curve.
+Identify which attribute has the highest coefficient and explain its impact.
+Save your results and screenshot the classifier output.
+5 Use housing.arff:
+Apply attribute selection filter with InfoGainAttributeEval and Ranker. Select top 3 features.
+Apply Linear Regression only on selected features.
+Compare results with the full feature set.
+Record RMSE and interpretation.
+6 Use wine.arff dataset:
+Apply AttributeSelection filter (e.g., using InfoGain).
+Retain top 4 attributes.
+Then apply KMeans clustering with 3 clusters.
+Evaluate how attribute selection affected clustering results.
+Show before and after clustering accuracy or compactness.
+7 Using bank-data.arff:
+Apply both KMeans and HierarchicalClusterer. Set KMeans to 2 clusters and Hierarchical to complete linkage.
+Compare visual cluster assignments.
+Discuss which algorithm better separates the customer groups and why.
+8 Using glass.arff dataset:
+Apply normalization to all attributes.
+Use KMeans with 6 clusters (as there are 6 glass types).
+Use ClusterEvaluation output to analyze cluster centroids.
+Save cluster assignments in a new attribute column.
+9 Use the weather.numeric.arff dataset.
+Apply the EM clustering algorithm.
+Allow WEKA to choose optimal number of clusters automatically.
+Interpret the cluster assignments and probabilities.
+Compare EM clustering results with SimpleKMeans
+10 Load the iris.arff dataset.
+● Apply the SimpleKMeans clustering algorithm.
+Set number of clusters = 3 (since iris has 3 species).
+Visualize the clusters using the Visualize Cluster Assignments tool.
+Analyze which attributes contributed most to cluster formation.
+Save and interpret the cluster output
+11 Sales Data – Profit Margin and Regional Analysis
+Dataset: Superstore Sample Dataset – Tableau
+You are given a sales dataset containing fields such as Region, Sales, and Profit.
+● Create a calculated field to compute the Profit Margin as (Profit / Sales) * 100. ● Aggregate the data to display total sales and average profit per region. ● Construct a bar chart that shows this information for each region.
+● Apply color encoding to highlight regions with high or low profit margins.
+● What insights can you draw from the variation in profit margins across regions?12
+Superstore – Processing Time Visualization
+Dataset: Superstore Sample Dataset – Tableau
+Question:
+ Using the Superstore dataset, analyze order processing efficiency.
+● Create a calculated field for Order Processing Time as the difference between Ship Date and Order Date.
+● Aggregate the average processing time grouped by Shipping Mode.
+● Build a line chart that shows the monthly trend of average processing time.
+● Filter the data to include only the Technology product category.
+● What do you observe about shipping performance over time?
+13
+Employee Data – Experience-Based Salary Analysis
+Dataset: Create your own or use Kaggle – HR Analytics Dataset
+Question:
+ You are analyzing an employee dataset with fields such as Experience and Salary.
+● Create a calculated field to classify employees as “Senior” if Experience > 5 years, else “Junior.”
+● Use aggregation to find the total salary paid to each category.
+● Construct a pie chart to visualize the salary distribution.
+● Add percentage labels and tooltips to display average salary per group.
+● What can you infer about how salary is distributed between senior and junior employees?14
+Customer Orders – High-Value Order Mapping
+Dataset: Kaggle – Global Superstore Dataset Question:
+ Given a customer orders dataset with fields including City and Order Amount:
+● Create a calculated field to identify “High-Value Orders” (Order Amount > ₹10,000).
+● Aggregate the count of high-value orders per city.
+● Visualize the results using a map, with color intensity representing the number of such
+orders.
+● Add filters to allow viewing by year.
+● Which cities have the highest concentration of high-value orders, and how might this
+inform business strategy?
+15
+Student Performance – Grade Distribution and Trends
+Dataset: Kaggle – Students Performance Dataset
+Question:
+ Using a student performance dataset with attributes like Score and Department:
+● Create a calculated field to assign grades
+● Aggregate the number of students in each grade per department.
+● Build a stacked bar chart showing grade distribution across departments.
+● Add interactive filters for Semester and Course.
+● Create a line chart to show how grade distributions have changed over time.
+● What patterns or trends do you observe in student performance?
+16
+Sales Data for Multiple Years – Union Operation
+Question:
+ You are given two Excel files: Sales_2022.xlsx and Sales_2023.xlsx. ● Combine the data using a union in Tableau.
+● Create a bar chart comparing monthly sales across both years. ● Add a calculated field to show year-over-year sales growth. ● What trends do you observe in sales performance between the two years?
+Dataset Source:
+ Create your own or split the Superstore dataset into two sheets by year using Excel.
+17
+Employees and Department Data – Left Join for Hierarchy Mapping
+Question:
+ You are given two datasets: Employees.csv and Departments.csv. ● Use a left join to combine employee data with department names using Department ID.● Create a tree map showing the number of employees per department. ● Identify departments with missing or unmatched employee records.
+● How does the left join help retain all employee data?
+Dataset Source:
+ Kaggle – HR Analytics Dataset
+18
+Product and Sales Details – Full Outer Join Comparison
+Question:
+ You have two datasets: Product_Master.csv and Sales.csv. ● Perform a full outer join on Product ID. ● Identify products with no sales and sales records with missing product info. ● Create a highlight table for products, showing sales and availability.
+● How does a full outer join help in auditing incomplete data?
+Dataset Source:
+ Can be created manually or derived from Sample Superstore by separating product and sales
+info
+19
+Merging Quarterly Reports – Union with Calculated Fields
+Question:
+ You are given quarterly data files: Q1_Sales.csv, Q2_Sales.csv, Q3_Sales.csv, and
+Q4_Sales.csv. ● Use union to merge all four datasets in Tableau.
+● Add a calculated field to tag each record with its respective quarter.
+● Build a stacked bar chart to compare product category-wise sales across quarters. ● Which quarter had the highest sales for each category?
+Dataset Source:
+ Create by splitting the Superstore dataset by quarter using Excel or calculated filters.
+20 Download the Global Superstore Excel Dataset:
+ Download Link- https://www.kaggle.com/datasets/shekpaul/global-superstore
+Import the Excel file into Tableau.
+Create a dashboard with:
+A bar chart for sales by region
+A pie chart for sales by category
+A map showing profits by state
+Add filters for Year and Category.
+21 Use this Mall Customers CSV Dataset:
+ Download Link- https://www.kaggle.com/datasets/shwetabh123/mallcustomers?resource=download
+Import the CSV file into Tableau. Create: 1. A scatter plot of Spending Score vs Annual Income2. A histogram of Age, 3 .A dashboard displaying customer demographics, 4.Add filter for
+Gender.
+38 Use this Movie JSON Dataset:
+Sample JSON Dataset
+ (Save raw JSON and import in Tableau)
+● Load JSON data into Tableau.
+● Visualize:
+○ Number of movies per decade
+○ Average IMDb rating by genre
+○ Dashboard showing total movies by language
+● Use filter for country.
+40
+Download the HR Analytics Excel Dataset:
+ HR Employee Attrition Dataset (Excel)-
+https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset
+Tasks:
+● Import the Excel dataset into Tableau.
+● Create the following visualizations:
+○ A bar chart showing employee attrition by department
+○ A pie chart showing job satisfaction distribution
+○ A line chart of average monthly income by age group
+● Design an interactive dashboard that includes all three visualizations with filters for
+Gender and Job Role.

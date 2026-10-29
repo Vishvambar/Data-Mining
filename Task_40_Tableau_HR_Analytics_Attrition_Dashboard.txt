@@ -1,0 +1,155 @@
+================================================================================
+TASK 40: HR EMPLOYEE ATTRITION INTERACTIVE DASHBOARD IN TABLEAU
+Dataset: IBM HR Analytics Employee Attrition Dataset (Excel/CSV)
+Kaggle: https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset
+Visualizations Required:
+  1. Bar Chart: Employee Attrition by Department
+  2. Pie Chart: Job Satisfaction Distribution
+  3. Line Chart: Average Monthly Income by Age Group
+  4. Interactive Dashboard with Global Filters for Gender and Job Role
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: IMPORT HR ANALYTICS DATASET INTO TABLEAU
+--------------------------------------------------------------------------------
+1. Launch Tableau Desktop.
+2. Under "Connect", click "Microsoft Excel" (or "Text file" if CSV).
+3. Browse to and open the downloaded IBM HR Attrition dataset.
+4. Verify key attributes in the data preview:
+   - Attrition: "Yes" / "No"
+   - Department: "Sales", "Research & Development", "Human Resources"
+   - JobSatisfaction: Number 1 to 4
+   - MonthlyIncome: Number
+   - Age: Number
+   - Gender: "Male" / "Female"
+   - JobRole: String (e.g., Sales Executive, Research Scientist, Manager, etc.)
+5. Click "Sheet 1".
+
+
+--------------------------------------------------------------------------------
+STEP 2: CREATE CALCULATED FIELD: "AGE GROUP"
+--------------------------------------------------------------------------------
+1. In the Data pane, right-click an empty area -> "Create Calculated Field...".
+2. Configure the field:
+   - Field Name: Age Group
+   - Formula:
+     IF [Age] < 25 THEN "1. Under 25"
+     ELSEIF [Age] <= 34 THEN "2. 25 - 34"
+     ELSEIF [Age] <= 44 THEN "3. 35 - 44"
+     ELSEIF [Age] <= 54 THEN "4. 45 - 54"
+     ELSE "5. 55 and Above"
+     END
+3. Verify that the calculation editor says "The calculation is valid."
+4. Click "OK".
+
+
+--------------------------------------------------------------------------------
+STEP 3: CREATE SHEET 1 — BAR CHART (EMPLOYEE ATTRITION BY DEPARTMENT)
+--------------------------------------------------------------------------------
+1. Rename Sheet 1 to **"Attrition by Department"**.
+2. Set Up Rows and Columns:
+   - Drag **"Department"** onto the **Rows** shelf.
+   - Drag **"EmployeeCount"** (or `CNT(EmployeeNumber)`) onto the **Columns** shelf.
+3. Breakdown by Attrition:
+   - Drag **"Attrition"** onto the **Color** tile on the Marks card.
+   - Marks card dropdown: Ensure it is set to **"Bar"**.
+4. Set Up Proportional Stacked Bar (Attrition Rate):
+   - Right-click the `SUM(EmployeeCount)` pill on Columns.
+   - Go to **Quick Table Calculation** -> select **"Percent of Total"**.
+   - Right-click it again -> select **"Compute Using"** -> **"Cell"** (or "Attrition").
+   - Result: Each department bar scales to 100%, showing the exact attrition percentage.
+5. Format Colors:
+   - Click "Color" tile -> "Edit Colors...":
+     * "Yes" (Left the company) -> Bright Red / Coral
+     * "No" (Stayed) -> Slate Blue / Gray
+   - Click "OK".
+6. Add Mark Labels:
+   - Drag `SUM(EmployeeCount)` (with Percent of Total) onto the **Label** tile on the Marks card.
+   - Observe: R&D has the lowest attrition rate (~13.8%), while Sales exhibits the highest (~20.6%).
+
+
+--------------------------------------------------------------------------------
+STEP 4: CREATE SHEET 2 — PIE CHART (JOB SATISFACTION DISTRIBUTION)
+--------------------------------------------------------------------------------
+1. Click the "New Worksheet" tab at the bottom; rename to **"Job Satisfaction Distribution"**.
+2. Switch Mark Type to Pie:
+   - On the Marks card, change the dropdown from "Automatic" to **"Pie"**.
+3. Create Meaningful Satisfaction Labels (Optional Calculated Field):
+   - Right-click in Data pane -> "Create Calculated Field...".
+   - Name: Job Satisfaction Level
+   - Formula:
+     CASE [JobSatisfaction]
+       WHEN 1 THEN "1 - Low"
+       WHEN 2 THEN "2 - Medium"
+       WHEN 3 THEN "3 - High"
+       WHEN 4 THEN "4 - Very High"
+     END
+   - Click "OK".
+4. Build the Pie Chart:
+   - Drag **"Job Satisfaction Level"** onto the **Color** tile on the Marks card.
+   - Drag **"EmployeeCount"** (or `CNT(EmployeeNumber)`) onto the **Angle** tile.
+5. Add Percentage & Count Labels:
+   - Drag **"Job Satisfaction Level"** onto the **Label** tile.
+   - Drag **"EmployeeCount"** onto the **Label** tile.
+   - Right-click the `SUM(EmployeeCount)` pill on Label -> **Quick Table Calculation** -> **"Percent of Total"**.
+6. Size & View:
+   - In the top toolbar, change view to **"Entire View"**.
+   - Click the **Size** tile on the Marks card and slide right to enlarge.
+
+
+--------------------------------------------------------------------------------
+STEP 5: CREATE SHEET 3 — LINE CHART (AVG MONTHLY INCOME BY AGE GROUP)
+--------------------------------------------------------------------------------
+1. Click the "New Worksheet" tab; rename to **"Income by Age Group"**.
+2. Set Up Horizontal Progression:
+   - Drag your calculated field **"Age Group"** onto the **Columns** shelf.
+3. Set Up Measure:
+   - Drag **"MonthlyIncome"** onto the **Rows** shelf.
+   - Right-click the `SUM(MonthlyIncome)` pill -> change "Measure (Sum)" to **"Average"** (`AVG(MonthlyIncome)`).
+4. Configure Line Chart:
+   - On the Marks card, ensure mark type is set to **"Line"**.
+   - Drag `AVG(MonthlyIncome)` onto the **Label** tile to display exact dollar figures on points.
+5. Format Currency:
+   - Right-click the `AVG(MonthlyIncome)` pill on Rows -> select "Format...".
+   - Under Numbers, choose "Currency (Custom)" -> Prefix: "$" -> 0 decimal places.
+6. Enhance Visibility:
+   - Click on the **Color** tile -> select a rich Navy or Teal color.
+   - Check the box "Markers" -> select "All" to show prominent data dots at each age bracket.
+   - Observe: Monthly income scales monotonically from ~$2,800 (Under 25) up to ~$11,000+ (55 and Above).
+
+
+--------------------------------------------------------------------------------
+STEP 6: DESIGN INTERACTIVE DASHBOARD WITH GENDER & JOB ROLE FILTERS
+--------------------------------------------------------------------------------
+1. Create Dashboard:
+   - Click the **"New Dashboard"** tab at the bottom.
+   - Rename it to **"HR Attrition & Workforce Intelligence"**.
+2. Set Canvas Size:
+   - In the left Dashboard pane, set Size to **"Automatic"**.
+3. Arrange Layout:
+   - Drag **"Attrition by Department"** into the top-left area.
+   - Drag **"Job Satisfaction Distribution"** into the top-right area.
+   - Drag **"Income by Age Group"** across the entire bottom half.
+4. Add Header:
+   - Check the box **"Show dashboard title"** at bottom-left.
+   - Double-click header: "HR WORKFORCE ATTRITION, SATISFACTION & COMPENSATION DASHBOARD".
+
+5. Add Global Filters for Gender and Job Role:
+   - Click on the "Attrition by Department" container in the dashboard.
+   - Click the container's "More Options" downward arrow -> **Filters** -> select **"Gender"**.
+   - Click the container's downward arrow again -> **Filters** -> select **"JobRole"**.
+   - Both interactive filter cards now appear in the right sidebar.
+
+6. Configure Multi-Sheet Interactivity (CRITICAL):
+   - Click the dropdown arrow on the **Gender** filter card:
+     * Select **"Apply to Worksheets"** -> click **"All Using This Data Source"**.
+   - Click the dropdown arrow on the **JobRole** filter card:
+     * Select **"Apply to Worksheets"** -> click **"All Using This Data Source"**.
+     * Format style: Change to **"Multiple Values (dropdown)"** for clean UI space.
+
+7. Test Dashboard Interactivity:
+   - Filter by "Female" + "Sales Executive": Notice how attrition proportions, satisfaction 
+     slices, and the salary curve instantly re-render specifically for female sales executives.
+   - Filter by "Research Scientist": Observe the high job satisfaction distribution and technical 
+     salary trajectory across age brackets.
+================================================================================

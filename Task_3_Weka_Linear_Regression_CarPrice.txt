@@ -1,0 +1,135 @@
+================================================================================
+TASK 3: LINEAR REGRESSION ON CARPRICE.ARFF WITH 66% SPLIT & FEATURE SELECTION
+Dataset: CarPrice.arff / CarPrice_Assignment.csv
+Target: price
+Predictors: enginesize, horsepower, curbweight
+Reference: https://www.kaggle.com/datasets/ngawangchoeda/car-price-dataset
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: LOAD AND PREPARE DATASET IN WEKA
+--------------------------------------------------------------------------------
+1. Launch WEKA GUI Chooser and click "Explorer".
+2. On the "Preprocess" tab:
+   - Click "Open file...".
+   - Set "Files of type:" to "CSV data files (*.csv)" or "Arff data files (*.arff)".
+   - Select CarPrice.arff (or CarPrice_Assignment.csv) and click "Open".
+3. Filter to Required Predictors:
+   - The task specifies predicting price based on:
+     * enginesize
+     * horsepower
+     * curbweight
+     * price (Target)
+   - In the "Attributes" panel on the left:
+     * Tick the checkboxes of all attributes EXCEPT enginesize, horsepower, curbweight, and price.
+     * Click the "Remove" button at the bottom of the Attributes panel.
+   - Verify that only these 4 attributes remain in the panel.
+   - Verify all 4 attributes have Type: "Numeric".
+
+
+--------------------------------------------------------------------------------
+STEP 2: RUN 1 (DEFAULT LINEAR REGRESSION WITH 66% PERCENTAGE SPLIT)
+--------------------------------------------------------------------------------
+1. Navigate to the "Classify" tab at the top.
+2. Select Classifier:
+   - Click "Choose".
+   - Expand: classifiers -> functions -> LinearRegression.
+3. Set Training/Test Evaluation to 66% Split:
+   - Under "Test options", select the radio button: "Percentage split".
+   - Set the percentage value to: 66
+     (This instructs WEKA to use 66% of the data for training and 34% for testing).
+4. Verify Target Attribute:
+   - In the dropdown below Test options, ensure "(Num) price" is selected.
+5. Execute:
+   - Click "Start".
+   - A new entry will appear in the "Result list" (bottom-left) such as:
+     "functions.LinearRegression..."
+
+
+--------------------------------------------------------------------------------
+STEP 3: SAVE THE TRAINED MODEL
+--------------------------------------------------------------------------------
+1. Go to the "Result list" panel on the bottom-left corner.
+2. Right-click on the result entry you just generated (e.g., "functions.LinearRegression...").
+3. From the context menu, click on "Save model".
+4. In the file save dialog:
+   - Choose your preferred folder.
+   - Enter a filename, e.g., "CarPrice_LinearRegression_66Split.model".
+   - Click "Save".
+   (Note: To reload it later, you can right-click the Result list area and select "Load model").
+
+
+--------------------------------------------------------------------------------
+STEP 4: INTERPRET COEFFICIENTS
+--------------------------------------------------------------------------------
+Scroll up in the "Classifier output" window to:
+"=== Classifier model (full training set) ==="
+
+Example Output Equation:
+price = 
+     β1 * enginesize +
+     β2 * horsepower +
+     β3 * curbweight +
+     Intercept
+
+Interpretation:
+1. enginesize (Engine Displacement/Capacity):
+   - Coefficient is typically positive (e.g., +80 to +110).
+   - Meaning: Holding horsepower and curbweight constant, each 1-unit (cc or cubic inch) 
+     increase in engine size increases the predicted car price by ~$80 - $110.
+2. horsepower:
+   - Coefficient is positive (e.g., +50 to +90).
+   - Meaning: Higher horsepower represents higher vehicle performance, directly 
+     adding value to the car's market price.
+3. curbweight:
+   - Coefficient is positive (e.g., +4.0 to +8.0).
+   - Meaning: Heavier cars usually indicate larger chassis, luxury build, or premium 
+     materials, incrementally raising the vehicle price per pound/kilogram.
+4. Intercept (Constant):
+   - Represents the baseline offset calculation when all numeric features are theoretically zero.
+
+
+--------------------------------------------------------------------------------
+STEP 5: COMPARE PERFORMANCE: DEFAULT VS. FEATURE SELECTION ENABLED
+--------------------------------------------------------------------------------
+In WEKA's LinearRegression classifier, the parameter "attributeSelectionMethod" controls 
+how internal feature selection is handled.
+
+Test A: Default Settings (M5 Method)
+1. By default, WEKA's LinearRegression uses the M5 method for feature selection:
+   - Click on the text box "LinearRegression -S 0 -R 1.0E-8 -num-decimal-places 4" to open properties.
+   - Notice: "attributeSelectionMethod" is set to "M5 method" (or value 0).
+   - Click "Cancel".
+   - Check the performance on the 66% percentage split:
+     * Correlation coefficient: Record value (e.g., ~0.89 - 0.92).
+     * Mean absolute error (MAE): Record value (e.g., ~$2,100).
+     * Root mean squared error (RMSE): Record value (e.g., ~$2,900).
+
+Test B: Disable Feature Selection (No Attribute Selection)
+1. Click on the "LinearRegression" text bar next to the "Choose" button.
+2. Find the property "attributeSelectionMethod":
+   - Click the dropdown and select "No attribute selection" (value: None / 1).
+3. Click "OK".
+4. Ensure "Percentage split: 66" is still selected.
+5. Click "Start".
+6. A second result will be added to the Result list.
+
+Test C: Compare the Two Runs in Classifier Output:
+1. Comparison Table:
+   ----------------------------------------------------------------------
+   Metric                      Default (M5 Selection)     No Feature Selection
+   ----------------------------------------------------------------------
+   Correlation Coefficient     e.g., 0.9125               e.g., 0.9125 (or slightly diff)
+   Mean Absolute Error (MAE)   e.g., 2050                 e.g., 2054
+   RMSE                        e.g., 2890                 e.g., 2892
+   Features Retained           Optimized subset           Forces all 3 features
+   ----------------------------------------------------------------------
+2. Observations & Conclusion:
+   - When only 3 strong predictors (enginesize, horsepower, curbweight) are passed, 
+     all 3 are typically retained because they are all statistically significant.
+   - If applied to the entire original dataset (26 columns):
+     * Default (M5 method) eliminates collinear/irrelevant features, resulting in 
+       a simpler, more generalizable model with lower test error.
+     * "No attribute selection" retains all attributes, causing overfitting and 
+       higher test error (higher RMSE/MAE) on the 34% holdout set.
+================================================================================

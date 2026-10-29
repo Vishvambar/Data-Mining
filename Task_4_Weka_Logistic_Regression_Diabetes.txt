@@ -1,0 +1,134 @@
+================================================================================
+TASK 4: LOGISTIC REGRESSION ON DIABETES.ARFF IN WEKA
+Dataset: diabetes.arff (Pima Indians Diabetes Dataset)
+Target Variable: class (tested_positive / tested_negative)
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: LOAD DIABETES.ARFF IN WEKA
+--------------------------------------------------------------------------------
+1. Open WEKA GUI Chooser and click "Explorer".
+2. Under the "Preprocess" tab:
+   - Click "Open file...".
+   - Locate "diabetes.arff" (standard in Weka's data directory:
+     e.g., C:\Program Files\Weka-3-x-x\data\diabetes.arff or data/diabetes.arff).
+   - Click "Open".
+3. Check the Dataset Overview:
+   - Instances: 768
+   - Attributes: 9
+     1. preg (Number of times pregnant)
+     2. plas (Plasma glucose concentration)
+     3. pres (Diastolic blood pressure)
+     4. skin (Triceps skin fold thickness)
+     5. insu (2-Hour serum insulin)
+     6. mass (Body mass index / BMI)
+     7. pedi (Diabetes pedigree function)
+     8. age (Age in years)
+     9. class (tested_negative, tested_positive) - Nominal target variable.
+
+
+--------------------------------------------------------------------------------
+STEP 2: RUN LOGISTIC REGRESSION
+--------------------------------------------------------------------------------
+1. Click on the "Classify" tab at the top.
+2. Select Classifier:
+   - Click "Choose".
+   - Expand: classifiers -> functions -> Logistic.
+3. Set Test Options:
+   - Select "Cross-validation" (Folds: 10).
+4. Verify Target Class:
+   - Ensure the dropdown shows "(Nom) class".
+5. Click the "Start" button.
+6. Execution will complete in 1-2 seconds.
+
+
+--------------------------------------------------------------------------------
+STEP 3: ANALYZE CONFUSION MATRIX
+--------------------------------------------------------------------------------
+Scroll to the bottom of the Classifier output to:
+"=== Confusion Matrix ==="
+
+Typical Output:
+   a    b   <-- classified as
+ 445   55 |   a = tested_negative
+ 116  152 |   b = tested_positive
+
+Analysis:
+1. Class 'a' (tested_negative):
+   - True Negatives (TN) = 445: Healthy individuals correctly identified as negative.
+   - False Positives (FP) = 55: Healthy individuals misclassified as diabetic (Type I error).
+2. Class 'b' (tested_positive):
+   - False Negatives (FN) = 116: Diabetic individuals misclassified as healthy (Type II error).
+     * High clinical risk: patient needs treatment but is flagged negative.
+   - True Positives (TP) = 152: Diabetic patients correctly identified.
+3. Summary Accuracy:
+   - Overall accuracy = (445 + 152) / 768 = 77.73%.
+
+
+--------------------------------------------------------------------------------
+STEP 4: ANALYZE ROC CURVE AND AUC
+--------------------------------------------------------------------------------
+1. Look at the table: "=== Detailed Accuracy By Class ===":
+   - Locate the row for "tested_positive".
+   - Locate the column "ROC Area":
+     * ROC Area is typically ~ 0.832 (Weighted Avg ~ 0.832).
+   - Interpretation: An AUC of 0.832 indicates good discriminative ability 
+     (83.2% probability that a randomly chosen diabetic patient is assigned a higher 
+     risk score than a randomly chosen healthy person).
+
+2. View the Visual ROC Curve:
+   - In the "Result list" (bottom-left), right-click on "functions.Logistic...".
+   - Select "Visualize threshold curve" -> click "tested_positive".
+   - In the pop-up window:
+     * X-axis represents False Positive Rate (1 - Specificity).
+     * Y-axis represents True Positive Rate (Sensitivity / Recall).
+     * The steep rise near the origin shows high sensitivity at low false alarm rates.
+
+
+--------------------------------------------------------------------------------
+STEP 5: IDENTIFY HIGHEST COEFFICIENT AND EXPLAIN IMPACT
+--------------------------------------------------------------------------------
+Scroll up in the output window to:
+"=== Classifier model (full training set) ==="
+
+Examine the coefficients table for class = tested_positive:
+Variable        Coeff.       Std. Dev.      z-Val.      p-Val.      Odds Ratio
+--------------------------------------------------------------------------------
+preg            0.1232       0.0321         3.839       0.0001      1.1311
+plas            0.0352       0.0037         9.497       0.0000      1.0358
+pres           -0.0133       0.0052        -2.541       0.0110      0.9868
+skin            0.0006       0.0069         0.089       0.9290      1.0006
+insu           -0.0012       0.0009        -1.322       0.1861      0.9988
+mass            0.0897       0.0151         5.946       0.0000      1.0939
+pedi            0.9452       0.2991         3.160       0.0016      2.5732
+age             0.0149       0.0093         1.593       0.1111      1.0150
+Intercept      -8.4047
+
+Key Findings:
+1. Attribute with Highest Raw Coefficient:
+   - "pedi" (Diabetes Pedigree Function) has the highest raw coefficient: ~ +0.9452 
+     (Odds Ratio ~ 2.57).
+   - Impact Explanation:
+     * Pedigree function measures genetic family risk score.
+     * With an Odds Ratio of ~2.57, each 1-unit increase in pedigree function multiplies 
+       the odds of having diabetes by 2.57 times (over 157% increase in odds).
+     * It is statistically significant (p-value = 0.0016 < 0.05).
+
+2. Attribute with Highest Statistical Significance / Total Influence (Z-score):
+   - "plas" (Plasma glucose concentration) has the highest z-value (~ 9.497, p < 0.00001).
+   - Even though its per-unit coefficient is 0.0352, blood glucose values range from 0 to 199, 
+     making it the single strongest real-world clinical predictor in the dataset.
+
+
+--------------------------------------------------------------------------------
+STEP 6: SAVE RESULTS AND SCREENSHOT THE OUTPUT
+--------------------------------------------------------------------------------
+1. Save Text Results:
+   - Right-click on the result in the "Result list" (bottom-left).
+   - Click "Save result buffer".
+   - Name the file "Diabetes_LogisticRegression_Output.txt" and save.
+2. Screenshot Classifier Output:
+   - On Windows: Press "Win + Shift + S" or "Print Screen" to capture the Classifier Output panel.
+   - On Linux: Use "gnome-screenshot -a" or the Screenshot utility to select the Weka window.
+   - Save the image as "Task4_Diabetes_Classifier_Output.png".
+================================================================================

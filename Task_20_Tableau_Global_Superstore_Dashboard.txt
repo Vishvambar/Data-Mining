@@ -1,0 +1,115 @@
+================================================================================
+TASK 20: GLOBAL SUPERSTORE EXECUTIVE DASHBOARD IN TABLEAU
+Dataset: Global Superstore Excel (Kaggle: https://www.kaggle.com/datasets/shekpaul/global-superstore)
+Visualizations Required:
+  1. Bar Chart: Sales by Region
+  2. Pie Chart: Sales by Category
+  3. Map: Profits by State
+  4. Interactive Dashboard with Global Filters for Year and Category
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: IMPORT DATASET INTO TABLEAU
+--------------------------------------------------------------------------------
+1. Launch Tableau Desktop.
+2. Under "Connect" on the left, click "Microsoft Excel".
+3. Navigate to and select the downloaded "Global Superstore.xlsx" (or .xls) file.
+4. Drag the "Orders" sheet onto the canvas.
+5. Verify column data types in the preview grid:
+   - "Order Date": Date
+   - "Region", "Category", "State", "Country": String / Geographic
+   - "Sales", "Profit": Number (decimal)
+
+
+--------------------------------------------------------------------------------
+STEP 2: CREATE SHEET 1 — BAR CHART (SALES BY REGION)
+--------------------------------------------------------------------------------
+1. Click "Sheet 1" at the bottom and rename it to **"Sales by Region"**.
+2. Configure Axes:
+   - Drag **"Region"** from Dimensions onto the **Rows** shelf.
+   - Drag **"Sales"** from Measures onto the **Columns** shelf (`SUM(Sales)`).
+3. Sort and Format:
+   - Click the **Sort Descending** icon in the toolbar (bar chart with down arrow).
+   - Drag **"Sales"** onto the **Color** tile (or drag "Region" to Color).
+   - Click the "T" icon in the toolbar to display exact sales labels on the ends of the bars.
+
+
+--------------------------------------------------------------------------------
+STEP 3: CREATE SHEET 2 — PIE CHART (SALES BY CATEGORY)
+--------------------------------------------------------------------------------
+1. Click the "New Worksheet" tab at the bottom; rename it to **"Sales by Category"**.
+2. Build Pie Chart:
+   - On the **Marks** card, change the dropdown from "Automatic" to **"Pie"**.
+   - Drag **"Category"** onto the **Color** tile.
+   - Drag **"Sales"** onto the **Angle** tile (`SUM(Sales)`).
+3. Add Percentage & Name Labels:
+   - Drag **"Category"** onto the **Label** tile.
+   - Drag **"Sales"** onto the **Label** tile.
+   - Right-click the `SUM(Sales)` pill on Label -> **Quick Table Calculation** -> **"Percent of Total"**.
+4. Adjust Size:
+   - Change view from "Standard" to **"Entire View"** in the top toolbar.
+   - Click the **Size** tile and slide to the right to make the pie large and clear.
+
+
+--------------------------------------------------------------------------------
+STEP 4: CREATE SHEET 3 — MAP (PROFITS BY STATE)
+--------------------------------------------------------------------------------
+1. Click "New Worksheet"; rename it to **"Profits by State"**.
+2. Generate Map:
+   - Drag **"State"** (or State/Province) onto the canvas / Detail tile on the Marks card.
+   - Also drag **"Country"** onto the **Detail** tile to accurately resolve state names worldwide.
+   - Tableau automatically adds `Longitude (generated)` to Columns and `Latitude (generated)` to Rows.
+3. Encode Profit by Color:
+   - Drag **"Profit"** from Measures onto the **Color** tile on the Marks card (`SUM(Profit)`).
+4. Configure Map Colors:
+   - Click "Color" tile -> "Edit Colors...".
+   - Palette: Choose **"Red-Green Diverging"** (or "Orange-Blue Diverging").
+   - Click "Advanced >>" -> check "Center" and set it to **0**.
+   - (This guarantees negative profit/loss states are clearly highlighted in red, 
+     while profitable states display in green).
+5. Switch Map Type (Optional):
+   - On Marks card, you can leave as "Circle" (symbol map) or change to "Map" (filled choropleth map).
+
+
+--------------------------------------------------------------------------------
+STEP 5: BUILD THE INTERACTIVE DASHBOARD
+--------------------------------------------------------------------------------
+1. Create Dashboard:
+   - At the bottom of the window, click the **"New Dashboard"** icon (window with a plus symbol).
+   - Rename the dashboard to **"Global Superstore Overview"**.
+2. Set Dashboard Canvas Size:
+   - In the left Dashboard pane, under "Size", change from "Fixed Size" to **"Automatic"** 
+     (or "Generic Desktop (1366 x 768)").
+3. Assemble Worksheets:
+   - Drag **"Sales by Region"** into the top-left quadrant of the canvas.
+   - Drag **"Sales by Category"** into the top-right quadrant.
+   - Drag **"Profits by State"** across the entire bottom half.
+4. Add Dashboard Header:
+   - Check the box at the bottom-left: **"Show dashboard title"**.
+   - Double-click the title: Enter "GLOBAL SUPERSTORE EXECUTIVE PERFORMANCE DASHBOARD".
+
+
+--------------------------------------------------------------------------------
+STEP 6: ADD GLOBAL INTERACTIVE FILTERS FOR YEAR AND CATEGORY
+--------------------------------------------------------------------------------
+1. Add Year Filter:
+   - Click on the "Sales by Region" sheet inside the dashboard to select it.
+   - In the top-right corner of that sheet's container, click the small downward triangle (More Options).
+   - Go to: **Filters** -> select **"YEAR(Order Date)"** (or "Order Date" -> Years).
+   - An interactive Year filter card appears on the dashboard.
+
+2. Add Category Filter:
+   - Click the "More Options" triangle on "Sales by Region" (or "Sales by Category").
+   - Go to: **Filters** -> select **"Category"**.
+   - An interactive Category filter card appears on the dashboard.
+
+3. Make Filters Apply to ALL 3 Worksheets (CRITICAL STEP):
+   - Click the small dropdown arrow on the **YEAR(Order Date)** filter card:
+     * Select **"Apply to Worksheets"** -> click **"All Using This Data Source"**.
+   - Click the small dropdown arrow on the **Category** filter card:
+     * Select **"Apply to Worksheets"** -> click **"All Using This Data Source"**.
+
+4. Test Interactivity:
+   - Change the Year slider or toggle Category checkboxes.
+   - Verify that the Bar Chart, Pie Chart, and Profit Map all update simultaneously in real-time.
+================================================================================

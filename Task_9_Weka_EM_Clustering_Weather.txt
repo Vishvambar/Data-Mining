@@ -1,0 +1,119 @@
+================================================================================
+TASK 9: EM (EXPECTATION MAXIMIZATION) CLUSTERING ON WEATHER.NUMERIC.ARFF IN WEKA
+Dataset: weather.numeric.arff (14 instances, outlook, temperature, humidity, windy, play)
+Operations: EM with automatic cluster selection (-1) -> Probability Analysis -> Comparison with SimpleKMeans
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: LOAD WEATHER.NUMERIC.ARFF IN WEKA
+--------------------------------------------------------------------------------
+1. Open WEKA GUI Chooser -> click "Explorer".
+2. In the "Preprocess" tab:
+   - Click "Open file...".
+   - Locate "weather.numeric.arff" (standard in Weka's data folder).
+   - Click "Open".
+3. Check the Relation:
+   - Instances: 14
+   - Attributes: 5
+     1. outlook (nominal: sunny, overcast, rainy)
+     2. temperature (numeric)
+     3. humidity (numeric)
+     4. windy (nominal: TRUE, FALSE)
+     5. play (nominal: yes, no)
+
+
+--------------------------------------------------------------------------------
+STEP 2: RUN EM CLUSTERING (AUTOMATIC NUMBER OF CLUSTERS)
+--------------------------------------------------------------------------------
+1. Click on the "Cluster" tab at the top.
+2. Select Clusterer:
+   - Click "Choose" -> expand: clusterers -> EM
+     (Path: weka.clusterers.EM).
+3. Configure EM for Automatic Cluster Selection:
+   - Click on the text box "EM" to open the properties panel.
+   - Look at the parameter: "numClusters".
+   - Set "numClusters" to: -1
+     *(Setting numClusters to -1 tells WEKA to use 10-fold cross-validation on log-likelihood 
+     to automatically determine the optimal number of clusters).*
+   - Leave other settings at default:
+     * minStdDev: 1.0E-6
+     * maxIterations: 100
+     * seed: 100
+   - Click "OK".
+4. Set Cluster Mode:
+   - Select "Use training set".
+5. Click "Start".
+6. Observe Output:
+   - WEKA tests cluster counts (1, 2, 3...) using cross-validated log likelihood.
+   - For weather.numeric, WEKA typically determines:
+     "Number of clusters selected by cross validation: 2" (or 1 depending on variance).
+
+
+--------------------------------------------------------------------------------
+STEP 3: INTERPRET CLUSTER ASSIGNMENTS AND PROBABILITIES
+--------------------------------------------------------------------------------
+In the "Clusterer output" window, examine the model details:
+
+1. Prior Probabilities (Cluster Weights):
+   - Output shows the mixture component priors:
+     * Cluster 0: e.g., 0.64 (64% prior probability)
+     * Cluster 1: e.g., 0.36 (36% prior probability)
+
+2. Attribute Probability Distributions:
+   - For Numeric Attributes (Temperature, Humidity):
+     EM models each cluster as a Gaussian (Normal) distribution:
+     * Cluster 0:
+       - temperature: mean = 74.2, standard deviation = 5.8
+       - humidity: mean = 86.1, standard deviation = 7.2
+     * Cluster 1:
+       - temperature: mean = 71.8, standard deviation = 4.2
+       - humidity: mean = 68.3, standard deviation = 6.5
+     Interpretation: Cluster 0 represents humid, hot conditions; Cluster 1 represents 
+     cooler, drier conditions.
+
+   - For Nominal Attributes (Outlook, Windy, Play):
+     EM calculates discrete probability tables:
+     * e.g., In Cluster 0: P(play = no) is high; in Cluster 1: P(play = yes) is high.
+
+3. Soft / Probabilistic Cluster Membership:
+   - Unlike KMeans (which forces an instance into strictly one cluster), EM assigns 
+     a probability vector to each instance:
+     * e.g., Instance #1: P(Cluster 0) = 0.94, P(Cluster 1) = 0.06
+     * Instance #7: P(Cluster 0) = 0.48, P(Cluster 1) = 0.52 (borderline case).
+
+
+--------------------------------------------------------------------------------
+STEP 4: RUN COMPARISON WITH SIMPLEKMEANS
+--------------------------------------------------------------------------------
+1. In the "Cluster" tab:
+   - Click "Choose" -> clusterers -> SimpleKMeans.
+2. Click on "SimpleKMeans" text:
+   - Set "numClusters" to 2 (matching the 2 clusters chosen by EM).
+   - Click "OK".
+3. Click "Start".
+4. Observe the SimpleKMeans output:
+   - Produces hard centroid averages for each attribute.
+   - Clustered instances split: e.g., Cluster 0: 9 instances (64%), Cluster 1: 5 instances (36%).
+
+
+--------------------------------------------------------------------------------
+STEP 5: COMPREHENSIVE COMPARISON: EM VS. SIMPLEKMEANS
+--------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+Feature / Criterion         EM (Expectation-Maximization)    SimpleKMeans
+-------------------------------------------------------------------------------------
+Clustering Philosophy       Probabilistic (Soft Clustering)  Distance-based (Hard Clustering)
+Membership                  Continuous probability [0.0, 1.0] Binary assignment (0 or 1)
+Determining 'k'             Automatic (set numClusters = -1) Manual (must specify k upfront)
+Cluster Shape / Boundary    Flexible elliptical Gaussians    Spherical / Convex Voronoi cells
+Underlying Model            Gaussian Mixture Models (GMM)    Centroid minimization (Euclidean)
+Handling Nominal Features   Native conditional probabilities Distance-converted / mode-based
+Sensitivity to Outliers     More robust (uses variance)      Sensitive (means shift by outliers)
+Computation Speed           Slower (iterative E and M steps) Extremely fast
+-------------------------------------------------------------------------------------
+
+Key Takeaway:
+EM is superior when data distributions have unequal variances or overlapping cluster 
+boundaries where knowing the certainty (probability) of classification matters. 
+SimpleKMeans is preferred when fast, non-overlapping partitioning is required.
+================================================================================

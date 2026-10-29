@@ -1,0 +1,109 @@
+================================================================================
+TASK 15: STUDENT PERFORMANCE GRADE DISTRIBUTION AND TRENDS IN TABLEAU
+Dataset: Students Performance Dataset (Kaggle)
+Fields: Score (Math/Reading/Writing or Composite Score), Department, Semester, Course, Year/Date
+Operations: Grade Calculation -> Stacked Bar Chart -> Interactive Filters -> Trend Line Chart -> Observations
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: LOAD STUDENT DATASET IN TABLEAU
+--------------------------------------------------------------------------------
+1. Open Tableau Desktop.
+2. Connect to your dataset: click "Text file" (CSV) or "Microsoft Excel".
+3. Load the file (e.g., StudentsPerformance.csv).
+4. Go to "Sheet 1".
+5. Note on Fields: If your dataset has separate scores (e.g., math score, reading score):
+   - You can create an "Overall Score" calculated field:
+     ([math score] + [reading score] + [writing score]) / 3
+   - Or use the provided "Score" column.
+
+
+--------------------------------------------------------------------------------
+STEP 2: CREATE CALCULATED FIELD: "GRADE ASSIGNMENT"
+--------------------------------------------------------------------------------
+1. In the Data pane, right-click and select "Create Calculated Field...".
+2. Configure the field:
+   - Field Name: Grade
+   - Enter Formula:
+     IF [Score] >= 90 THEN "A (Excellent)"
+     ELSEIF [Score] >= 80 THEN "B (Good)"
+     ELSEIF [Score] >= 70 THEN "C (Average)"
+     ELSEIF [Score] >= 60 THEN "D (Pass)"
+     ELSE "F (Fail)"
+     END
+3. Verify that the calculation editor says "The calculation is valid."
+4. Click "OK".
+
+
+--------------------------------------------------------------------------------
+STEP 3: BUILD STACKED BAR CHART (GRADE DISTRIBUTION PER DEPARTMENT)
+--------------------------------------------------------------------------------
+1. Place Department on Rows:
+   - Drag **"Department"** (or parental level of education / race group if standard Kaggle file) 
+     onto the **Rows** shelf.
+2. Place Student Count on Columns:
+   - Drag **"Student ID"** (or any unique field / row count) onto the **Columns** shelf.
+   - Right-click the pill -> select "Measure" -> **"Count"** (or `CNT(Student ID)`).
+3. Stack by Grade:
+   - Drag the calculated field **"Grade"** onto the **Color** tile on the Marks card.
+   - Ensure the Marks dropdown is set to **"Bar"**.
+4. Convert to 100% Stacked Bar (Proportional Distribution):
+   - Right-click the `CNT(Student ID)` green pill on Columns.
+   - Go to **Quick Table Calculation** -> select **"Percent of Total"**.
+   - Right-click the pill again -> select **"Compute Using"** -> select **"Cell"** (or "Grade").
+   - Now each bar sums to 100%, allowing direct comparison of grade proportions across departments.
+5. Set Grade Colors:
+   - Click "Color" on Marks card -> "Edit Colors...".
+   - Assign intuitive shades (e.g., Grade A = Deep Green, B = Light Green, C = Yellow, D = Orange, F = Red).
+6. Click the "T" icon in the toolbar to display percentage labels on each bar segment.
+
+
+--------------------------------------------------------------------------------
+STEP 4: ADD INTERACTIVE FILTERS FOR SEMESTER AND COURSE
+--------------------------------------------------------------------------------
+1. Filter 1: Semester
+   - Drag **"Semester"** from Dimensions onto the **Filters** shelf.
+   - Select "All" -> click "OK".
+   - Right-click the "Semester" filter pill -> click **"Show Filter"**.
+2. Filter 2: Course
+   - Drag **"Course"** from Dimensions onto the **Filters** shelf.
+   - Select "All" -> click "OK".
+   - Right-click the "Course" filter pill -> click **"Show Filter"**.
+3. Format Filter Cards:
+   - On the interactive filter cards on the right, click each card's dropdown arrow:
+   - Change to **"Multiple Values (dropdown)"** or **"Single Value (list)"** for easy navigation.
+
+
+--------------------------------------------------------------------------------
+STEP 5: CREATE LINE CHART FOR GRADE TRENDS OVER TIME
+--------------------------------------------------------------------------------
+1. Open a new sheet ("Sheet 2") and rename it "Grade Trends Over Time".
+2. Set Time Dimension on Columns:
+   - Drag **"Semester"** (or "Date" / "Academic Year") onto the **Columns** shelf.
+   - If using a date field, right-click and set to discrete Year/Quarter or continuous Date.
+3. Set Student Count on Rows:
+   - Drag **"Student ID"** to the **Rows** shelf -> set to `CNT(Student ID)`.
+4. Segment by Grade:
+   - Drag **"Grade"** onto the **Color** tile on the Marks card.
+5. Set Chart Type:
+   - Set Marks card dropdown to **"Line"**.
+   - Result: Multiple colored trend lines showing how the volume of A, B, C, D, and F grades 
+     evolves across successive academic terms.
+
+
+--------------------------------------------------------------------------------
+STEP 6: PATTERNS AND TRENDS IN STUDENT PERFORMANCE
+--------------------------------------------------------------------------------
+1. Departmental Disparities:
+   - Technical / Quantitative departments (e.g., Computer Science, Engineering, Mathematics) 
+     frequently display a wider score dispersion, with higher failure rates (Grades D & F) 
+     and fewer A grades compared to Arts and Humanities.
+2. Temporal Trends:
+   - Early Semesters (Semester 1 & 2): Higher proportion of C, D, and F grades as students 
+     transition into university-level rigor.
+   - Advanced Semesters (Semester 5+): Upward drift in the proportion of A and B grades 
+     (Grade inflation and survival bias as struggling students drop or change majors).
+3. Actionable Academic Interventions:
+   - Early Warning System: Departments showing sudden spikes in 'D' or 'F' grades in specific 
+     courses (e.g., Calculus or Data Structures) should implement targeted peer tutoring.
+================================================================================

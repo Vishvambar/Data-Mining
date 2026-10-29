@@ -1,0 +1,122 @@
+================================================================================
+TASK 7: KMEANS VS. HIERARCHICAL CLUSTERING ON BANK-DATA.ARFF IN WEKA
+Dataset: bank-data.arff (600 customer records, banking demographics & products)
+Algorithms: SimpleKMeans (k=2) vs. HierarchicalClusterer (k=2, Complete Linkage)
+Visual Comparison & Separation Discussion
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: LOAD BANK-DATA.ARFF AND REMOVE ID ATTRIBUTE
+--------------------------------------------------------------------------------
+1. Open WEKA GUI Chooser -> Explorer -> "Preprocess" tab.
+2. Click "Open file..." -> locate and open "bank-data.arff".
+3. Check the Attributes:
+   - Attributes: id, age, sex, region, income, married, children, car, save_act, 
+     current_act, mortgage, pep (pep = Personal Equity Plan: YES/NO).
+4. Remove the Identifier Column (id):
+   - The first column "id" is an arbitrary unique string and should NOT be used for clustering.
+   - In the "Attributes" panel, tick the box for "id".
+   - Click the "Remove" button at the bottom.
+   - Verify that 11 attributes remain (age, sex, region, income, ..., pep).
+
+
+--------------------------------------------------------------------------------
+STEP 2: RUN 1 — SIMPLEKMEANS (2 CLUSTERS)
+--------------------------------------------------------------------------------
+1. Switch to the "Cluster" tab at the top.
+2. Choose Classifier:
+   - Click "Choose" -> expand: clusterers -> SimpleKMeans.
+3. Configure Parameters:
+   - Click on the text box "SimpleKMeans" to open its property sheet:
+     * numClusters: 2
+     * distanceFunction: weka.core.EuclideanDistance
+     * maxIterations: 500
+     * seed: 10
+   - Click "OK".
+4. Set Cluster Mode:
+   - Under "Cluster mode", select "Use training set".
+5. Ignore pep (Optional if using unsupervised clustering on customer profile):
+   - Click the "Ignore attributes" button under Cluster mode.
+   - You can select "pep" so it is excluded during cluster creation.
+   - Click "Select".
+6. Execute:
+   - Click "Start".
+7. Note Output:
+   - Clustered Instances:
+     * Cluster 0: e.g., 348 instances (~58%)
+     * Cluster 1: e.g., 252 instances (~42%)
+   - Centroids: Shows mean age and income for each cluster.
+
+
+--------------------------------------------------------------------------------
+STEP 3: RUN 2 — HIERARCHICALCLUSTERER (2 CLUSTERS, COMPLETE LINKAGE)
+--------------------------------------------------------------------------------
+1. In the "Cluster" tab, click "Choose".
+2. Expand: clusterers -> HierarchicalClusterer
+   (Path: weka.clusterers.HierarchicalClusterer).
+3. Configure Parameters:
+   - Click directly on the "HierarchicalClusterer" text box:
+     * numClusters: 2
+     * linkType: Change from "SINGLE" to "COMPLETE" (Complete Linkage / Furthest Neighbor).
+     * distanceFunction: weka.core.EuclideanDistance
+   - Click "OK".
+4. Ensure "Cluster mode" is set to "Use training set".
+5. Click "Start".
+   (Hierarchical clustering performs pairwise distance calculations, so it may take 
+   a few extra seconds to build the dendrogram).
+6. Note Output:
+   - Clustered Instances:
+     * Cluster 0: e.g., 420 instances (~70%)
+     * Cluster 1: e.g., 180 instances (~30%)
+
+
+--------------------------------------------------------------------------------
+STEP 4: COMPARE VISUAL CLUSTER ASSIGNMENTS
+--------------------------------------------------------------------------------
+1. Visualizing KMeans Clusters:
+   - In the "Result list" (bottom-left), right-click on the "SimpleKMeans" entry.
+   - Select "Visualize cluster assignments".
+   - In the Weka Cluster Visualize window:
+     * Set X-axis: "income"
+     * Set Y-axis: "age"
+     * Set Color: "Cluster" (default)
+     * Adjust "Jitter" slider slightly (to 20-30%) to reduce point overlap.
+   - Observe: KMeans creates a balanced, clear boundary cleanly dividing customers 
+     by income and age tiers.
+
+2. Visualizing Hierarchical Clusters:
+   - Right-click on the "HierarchicalClusterer" entry in the Result list.
+   - Select "Visualize cluster assignments".
+   - Set X-axis: "income", Y-axis: "age", Color: "Cluster".
+   - Observe: Hierarchical Complete Linkage produces a more skewed distribution 
+     where outliers and high-income clusters are isolated into a smaller, tighter cluster.
+
+3. Visualizing Hierarchical Tree (Dendrogram):
+   - Right-click "HierarchicalClusterer" -> select "Visualize tree".
+   - A full interactive dendrogram appears showing the hierarchical merging history.
+
+
+--------------------------------------------------------------------------------
+STEP 5: DISCUSSION — WHICH ALGORITHM BETTER SEPARATES THE GROUPS AND WHY?
+--------------------------------------------------------------------------------
+1. Cluster Separation Comparison:
+   - SimpleKMeans provides a **better and more balanced customer segmentation**:
+     * It splits the customer base into roughly equal, actionable segments 
+       (e.g., lower-income younger customers vs. affluent middle-aged customers).
+     * KMeans optimizes within-cluster variance, making each cluster centroid 
+       representative of a true banking customer persona.
+
+2. Why Hierarchical Clustering with Complete Linkage is Different:
+   - Complete Linkage defines cluster distance by the MAXIMUM distance between any 
+     two points in the clusters ($D(A,B) = \max \{d(x,y) : x \in A, y \in B\}$).
+   - Strengths: Avoids the "chaining effect" seen in Single Linkage and forces 
+     compact, spherical boundaries.
+   - Weaknesses on Bank Data: Highly sensitive to extreme income outliers. It tends 
+     to cluster the majority of standard customers into one dominant giant cluster, 
+     leaving a very small secondary cluster of extreme earners.
+
+3. Final Verdict:
+   - For marketing and customer segmentation on bank-data.arff, **SimpleKMeans** 
+     is superior because it generates commercially viable, well-balanced cohorts 
+     with clear demographic separations across Age, Income, and Account ownership.
+================================================================================

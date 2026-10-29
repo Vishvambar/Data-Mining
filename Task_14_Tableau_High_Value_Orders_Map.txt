@@ -1,0 +1,121 @@
+================================================================================
+TASK 14: HIGH-VALUE ORDER MAPPING IN TABLEAU
+Dataset: Global Superstore Dataset (Kaggle)
+Fields: City, Sales (Order Amount), Order Date, Country / State
+Operations: Calculated Field (Sales > 10,000) -> Map Visual -> Color Intensity -> Year Filter -> Business Strategy
+================================================================================
+
+--------------------------------------------------------------------------------
+STEP 1: LOAD GLOBAL SUPERSTORE DATASET IN TABLEAU
+--------------------------------------------------------------------------------
+1. Launch Tableau Desktop.
+2. Under "Connect", click "Microsoft Excel" or "Text file".
+3. Browse and select "Global Superstore.xlsx" (or .csv).
+4. Drag the "Orders" table to the canvas if needed.
+5. Go to "Sheet 1".
+6. Check Geographic Roles:
+   - In the Data pane, look at the globe icon next to "City", "State", and "Country".
+   - If "City" does not have a globe icon:
+     * Right-click "City" -> "Geographic Role" -> "City".
+     * Also ensure "Country/Region" has Geographic Role -> "Country/Region".
+
+
+--------------------------------------------------------------------------------
+STEP 2: CREATE CALCULATED FIELD: "HIGH-VALUE ORDERS"
+--------------------------------------------------------------------------------
+1. In the Data pane, right-click and choose "Create Calculated Field...".
+2. Configure the field:
+   - Field Name: High-Value Order Flag
+   - Formula:
+     IF [Sales] > 10000 THEN 1 ELSE 0 END
+   *(Using an integer flag 1/0 allows you to simply use SUM([High-Value Order Flag]) 
+   to get the exact count of high-value transactions per city).*
+
+   Alternative Count Formula:
+   - Field Name: High-Value Orders Count
+   - Formula:
+     COUNTD(IF [Sales] > 10000 THEN [Order ID] END)
+
+3. Verify that the calculation editor says "The calculation is valid."
+4. Click "OK".
+
+
+--------------------------------------------------------------------------------
+STEP 3: BUILD THE MAP VISUALIZATION
+--------------------------------------------------------------------------------
+1. Generate Map Coordinates:
+   - Double-click on "City" in the Data pane (Tableau automatically adds `Longitude (generated)` 
+     to Columns and `Latitude (generated)` to Rows).
+   - Alternatively, manually drag:
+     * `Longitude (generated)` to the **Columns** shelf.
+     * `Latitude (generated)` to the **Rows** shelf.
+     * Drag **"City"** onto the **Detail** tile on the Marks card.
+2. Add Geographic Context:
+   - To resolve ambiguous city names across the world (e.g., Paris, France vs. Paris, Texas):
+     * Drag **"Country"** (or Country/Region) onto the **Detail** tile.
+     * Drag **"State"** onto the **Detail** tile.
+   - You will see plot points for every city across the global map.
+
+
+--------------------------------------------------------------------------------
+STEP 4: ENCODE HIGH-VALUE ORDER COUNT WITH COLOR INTENSITY & SIZE
+--------------------------------------------------------------------------------
+1. Apply Color Intensity:
+   - Drag **`High-Value Order Flag`** from Measures onto the **Color** tile on the Marks card.
+   - It will aggregate as `SUM(High-Value Order Flag)`.
+2. Edit Map Color Palette:
+   - Click on the **Color** tile on Marks card -> click "Edit Colors...".
+   - In the Palette dropdown, select a sequential gradient such as **"Red"**, **"Orange"**, or **"Purple"**.
+   - Check the box for "Stepped Color" (e.g., 5 or 6 steps) to make high-density hotspots pop.
+   - Click "OK".
+3. Adjust Bubble Size:
+   - Drag `SUM(High-Value Order Flag)` onto the **Size** tile on the Marks card.
+   - Click on the **Size** tile and slide the marker to increase marker diameter.
+   - Result: Cities with more high-value orders appear as larger, intensely colored bubbles.
+4. Filter Out Cities with Zero High-Value Orders:
+   - Drag `SUM(High-Value Order Flag)` to the **Filters** shelf.
+   - Select "At least" -> enter `1` -> click "OK".
+   - (This removes zero-order cities, keeping the map clean and focused).
+
+
+--------------------------------------------------------------------------------
+STEP 5: ADD INTERACTIVE YEAR FILTER
+--------------------------------------------------------------------------------
+1. Locate the dimension **"Order Date"** in the Data pane.
+2. Drag "Order Date" onto the **Filters** shelf.
+3. In the Filter [Order Date] dialog:
+   - Select **"Years"** -> click "Next >".
+   - Select "All" -> click "OK".
+4. Make Filter Interactive:
+   - Right-click the `YEAR(Order Date)` pill on the Filters shelf.
+   - Select **"Show Filter"**.
+   - An interactive Year card appears on the right.
+   - Click the dropdown arrow on the filter card -> select **"Single Value (Slider)"** or **"Multiple Values (List)"**.
+
+
+--------------------------------------------------------------------------------
+STEP 6: IDENTIFY TOP CITIES & INFORM BUSINESS STRATEGY
+--------------------------------------------------------------------------------
+1. Top Cities with Highest High-Value Concentration:
+   - Major Global Metropolises dominate the map:
+     * New York City (United States)
+     * Los Angeles (United States)
+     * London (United Kingdom)
+     * Paris (France)
+     * Sydney (Australia)
+     * Seattle (United States)
+
+2. Strategic Business Insights:
+   a. Tier-1 Logistics Hubs:
+      - Place dedicated premium warehousing and expedited fulfillment centers near top cities 
+        to offer Same-Day / White-Glove delivery for orders exceeding ₹10,000.
+   b. Account Management & Enterprise Sales:
+      - Deploy specialized B2B and VIP customer account managers in these metropolitan clusters 
+        to build bespoke client relationships and offer customized credit terms.
+   c. High-Margin Inventory Allocation:
+      - High-ticket technology products (servers, enterprise copiers, high-end workstations) 
+        should be prioritized in inventory buffers in these cities.
+   d. Expansion Opportunities:
+      - Mid-tier cities showing emerging high-value transactions represent lucrative targets 
+        for localized digital B2B marketing campaigns.
+================================================================================
